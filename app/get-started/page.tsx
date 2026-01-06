@@ -13,21 +13,6 @@ import Image from "next/image"
 
 const signupImages = [
   {
-    src: "/audio-mixing-console-purple-neon-lights-studio.jpg",
-    quote: "Create stunning audio with AI",
-    author: "Voice Generation",
-  },
-  {
-    src: "/sound-wave-visualization-purple-cyan-abstract.jpg",
-    quote: "Transform your voice instantly",
-    author: "Real-time Processing",
-  },
-  {
-    src: "/professional-microphone-purple-lighting-studio.jpg",
-    quote: "Studio quality, anywhere",
-    author: "Listen Buddy Plugin",
-  },
-  {
     src: "/music-producer-at-computer-purple-ambient-light.jpg",
     quote: "Start your audio journey today",
     author: "Zenphony Audio",
@@ -99,10 +84,13 @@ function GetStartedContent() {
   }, [isLogin])
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImage((prev) => (prev + 1) % carouselImages.length)
-    }, 4000)
-    return () => clearInterval(interval)
+    // Only set up carousel if there's more than one image
+    if (carouselImages.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentImage((prev) => (prev + 1) % carouselImages.length)
+      }, 4000)
+      return () => clearInterval(interval)
+    }
   }, [carouselImages.length])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -206,24 +194,26 @@ function GetStartedContent() {
                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center shadow-[0_0_30px_rgba(139,92,246,0.5)]">
                   <Activity className="w-6 h-6 text-white" />
                 </div>
-                <p className="text-2xl font-bold text-white leading-tight">{carouselImages[currentImage].quote}</p>
-                <p className="text-white/60 font-medium">{carouselImages[currentImage].author}</p>
+                <p className="text-2xl font-bold text-white leading-tight">{carouselImages[currentImage]?.quote}</p>
+                <p className="text-white/60 font-medium">{carouselImages[currentImage]?.author}</p>
               </div>
 
-              {/* Carousel indicators */}
-              <div className="flex gap-2 mt-6">
-                {carouselImages.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentImage(index)}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${
-                      index === currentImage
-                        ? "w-8 bg-gradient-to-r from-violet-500 to-fuchsia-500"
-                        : "w-1.5 bg-white/40 hover:bg-white/60"
-                    }`}
-                  />
-                ))}
-              </div>
+              {/* Carousel indicators - only show if there are multiple images */}
+              {carouselImages.length > 1 && (
+                <div className="flex gap-2 mt-6">
+                  {carouselImages.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentImage(index)}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${
+                        index === currentImage
+                          ? "w-8 bg-gradient-to-r from-violet-500 to-fuchsia-500"
+                          : "w-1.5 bg-white/40 hover:bg-white/60"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Decorative logo */}

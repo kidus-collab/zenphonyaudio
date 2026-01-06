@@ -111,22 +111,21 @@ export default function ListenBuddyPage() {
           <div className="relative max-w-4xl mx-auto text-center">
             {/* Listen Buddy Logo */}
             <div className="inline-flex flex-col items-center mb-10">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
                 <span className="text-2xl sm:text-3xl font-bold text-white">LISTEN</span>
-                {/* Friendly Bot with Headphones */}
-                <div className="relative mx-1">
-                  <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/40">
-                    <Headphones className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                  </div>
-                  {/* Friendly eyes */}
-                  <div className="absolute -top-1 left-1/2 -translate-x-1/2 flex gap-3">
-                    <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.8)]" />
-                    <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_6px_rgba(34,211,238,0.8)]" />
-                  </div>
+                {/* Listen Buddy Icon */}
+                <div className="relative w-8 h-8 sm:w-9 sm:h-9 overflow-hidden">
+                  <Image
+                    src="/listen-buddy-icon.png"
+                    alt="Listen Buddy Icon"
+                    fill
+                    className="object-cover object-left"
+                    priority
+                  />
                 </div>
                 <span className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400">BUDDY</span>
               </div>
-              <span className="text-[10px] sm:text-xs text-white/40 uppercase tracking-[0.3em] mt-3">Audio Analysis Plugin</span>
+              <span className="text-[10px] sm:text-xs text-white/40 uppercase tracking-[0.3em] mt-1">Audio Analysis Plugin</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">

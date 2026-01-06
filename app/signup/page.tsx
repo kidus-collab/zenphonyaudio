@@ -7,18 +7,63 @@ import Link from "next/link"
 import { useState } from "react"
 import { ZenphonyLogo } from "@/components/zenphony-logo"
 import { Aurora } from "@/components/aurora"
+import { createClient } from "@/lib/supabase/client"
+import { useRouter } from "next/navigation"
 
 export default function SignupPage() {
+  const router = useRouter()
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError("")
+    
     if (password !== confirmPassword) {
-      alert("Passwords don't match!")
+      setError("Passwords don't match!")
       return
+    }
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters")
+      return
+    }
+
+    setLoading(true)
+
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: {
+            full_name: name,
+          },
+        },
+      })
+
+      if (error) {
+        // Check if email is already registered
+        if (error.message.includes("already been registered") || error.message.includes("already registered")) {
+          setError("Email is already registered. Please sign in instead.")
+        } else {
+          setError(error.message)
+        }
+        return
+      }
+
+      // Success - redirect to check email page
+      router.push("/signup/success")
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -133,12 +178,19 @@ export default function SignupPage() {
               </label>
             </div>
 
+            {error && (
+              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+                {error}
+              </div>
+            )}
+
             <Button
               type="submit"
               size="lg"
+              disabled={loading}
               className="w-full rounded-full bg-gradient-to-r from-violet to-purple text-white hover:opacity-90 font-bold glow-violet"
             >
-              Create Account
+              {loading ? "Creating account..." : "Create Account"}
             </Button>
           </form>
 
