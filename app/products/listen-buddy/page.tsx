@@ -151,7 +151,7 @@ export default function ListenBuddyPage() {
                   </Button>
                 </Link>
               ) : (
-                <Link href="/get-started?mode=login">
+                <Link href="/login">
                   <Button className="rounded-full bg-violet-600 hover:bg-violet-500 text-white font-semibold px-10 py-7 text-lg shadow-lg shadow-violet-600/25 transition-all duration-200">
                     <Play className="w-6 h-6 mr-2" />
                     Start Free Trial

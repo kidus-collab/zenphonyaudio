@@ -132,7 +132,7 @@ export function Navigation() {
                       Log in
                     </Button>
                   </Link>
-                  <Link href="/get-started">
+                  <Link href="/signup">
                     <Button
                       className="rounded-full bg-violet-600 hover:bg-violet-500 text-white font-semibold px-5 py-2 text-sm shadow-lg shadow-violet-600/25 hover:shadow-violet-500/30 transition-all duration-200 border-0"
                     >

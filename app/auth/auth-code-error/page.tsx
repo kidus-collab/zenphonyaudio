@@ -6,11 +6,24 @@ import Link from "next/link"
 import { ZenphonyLogo } from "@/components/zenphony-logo"
 import { Aurora } from "@/components/aurora"
 import { useSearchParams } from "next/navigation"
+import { Suspense } from "react"
 
-export default function AuthCodeErrorPage() {
+function ErrorContent() {
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
   const errorMessage = error ? decodeURIComponent(error) : null
+
+  return (
+    <p className="text-muted-foreground mb-6 leading-relaxed">
+      {errorMessage
+        ? errorMessage
+        : "There was an issue with the authentication code. The link may have expired or is invalid."
+      }
+    </p>
+  )
+}
+
+export default function AuthCodeErrorPage() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 relative overflow-hidden">
       <Aurora />
@@ -41,13 +54,14 @@ export default function AuthCodeErrorPage() {
           <h1 className="text-3xl font-black text-foreground mb-3">
             Authentication Error
           </h1>
-          
-          <p className="text-muted-foreground mb-6 leading-relaxed">
-            {errorMessage
-              ? errorMessage
-              : "There was an issue with the authentication code. The link may have expired or is invalid."
-            }
-          </p>
+
+          <Suspense fallback={
+            <p className="text-muted-foreground mb-6 leading-relaxed">
+              There was an issue with the authentication code. The link may have expired or is invalid.
+            </p>
+          }>
+            <ErrorContent />
+          </Suspense>
 
           <div className="bg-red-500/10 rounded-xl p-4 border border-red-500/20 mb-6">
             <p className="text-sm text-foreground">
@@ -64,7 +78,7 @@ export default function AuthCodeErrorPage() {
                 Go to Sign In
               </Button>
             </Link>
-            
+
             <Link href="/signup">
               <Button
                 className="w-full rounded-full bg-gradient-to-r from-violet to-purple text-white hover:opacity-90 font-bold glow-violet"

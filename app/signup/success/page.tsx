@@ -50,7 +50,7 @@ export default function SignupSuccessPage() {
                   Didn't receive the email?
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Check your spam folder or try signing up again.
+                  Check your <span className="text-violet-400">Spam folder</span> or <span className="text-violet-400">All Mail</span>, or try signing up again.
                 </p>
               </div>
             </div>
