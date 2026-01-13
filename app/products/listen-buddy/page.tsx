@@ -476,7 +476,7 @@ export default function ListenBuddyPage() {
 
                 <div className="p-4 sm:p-6 bg-violet-500/10 rounded-lg sm:rounded-xl border border-violet-500/20">
                   <p className="text-base sm:text-lg lg:text-xl text-white/70 font-medium">
-                    Try <span className="text-violet-400 font-semibold">5 minutes</span> of listening completely free.
+                    Try <Link href="/checkout?plan=free" className="text-violet-400 font-semibold hover:text-violet-300 underline underline-offset-2 transition-colors">5 minutes</Link> of listening completely free.
                   </p>
                 </div>
               </div>

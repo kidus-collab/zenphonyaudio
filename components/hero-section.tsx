@@ -23,24 +23,24 @@ export function HeroSection() {
         </div>
 
         {/* Main Headline */}
-        <div className="pt-6 sm:pt-8 lg:pt-10 px-2 sm:px-6 lg:px-12">
-          <h1 className="text-white leading-[0.9] mb-8 sm:mb-10 lg:mb-12">
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-pink-400 to-fuchsia-400 font-[family-name:var(--font-milker)] text-6xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10rem] pb-2 sm:pb-4 animate-gradient bg-[length:200%_200%] drop-shadow-[0_0_40px_rgba(236,72,153,0.5)]">
+        <div className="pt-6 sm:pt-8 lg:pt-10 w-full flex flex-col items-center justify-center">
+          <h1 className="text-white leading-[1.1] mb-8 sm:mb-10 lg:mb-12 text-center w-full flex flex-col items-center">
+            <span className="inline-block text-center text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-pink-400 to-fuchsia-400 font-[family-name:var(--font-milker)] text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl pb-4 sm:pb-6 pr-2 animate-gradient bg-[length:200%_200%] drop-shadow-[0_0_40px_rgba(236,72,153,0.5)]">
               Intelligence
             </span>
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-pink-400 to-fuchsia-400 font-[family-name:var(--font-milker)] text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl animate-gradient bg-[length:200%_200%] drop-shadow-[0_0_40px_rgba(236,72,153,0.5)]">
+            <span className="inline-block text-center text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-pink-400 to-fuchsia-400 font-[family-name:var(--font-milker)] text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl pr-2 animate-gradient bg-[length:200%_200%] drop-shadow-[0_0_40px_rgba(236,72,153,0.5)]">
               for Sound
             </span>
           </h1>
         </div>
 
         {/* Subheadline */}
-        <p className="text-base sm:text-lg lg:text-xl text-white/60 max-w-2xl mb-8 sm:mb-10 leading-relaxed px-2">
+        <p className="text-base sm:text-lg lg:text-xl text-white/60 max-w-2xl mb-8 sm:mb-10 leading-relaxed px-6 text-center w-full">
           Zenphony Audio builds intelligent tools that help humans hear more clearly, decide faster, and trust their sound.
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 px-4">
+        <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-3 sm:gap-4 px-6 w-full">
           <a
             href="/products/listen-buddy"
             className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-violet-600 hover:bg-violet-500 text-white text-sm sm:text-base font-semibold rounded-full shadow-lg shadow-violet-600/25 hover:shadow-violet-500/30 transition-all duration-200"
@@ -84,7 +84,7 @@ export function HeroSection() {
       </div>
 
       {/* Scroll indicator */}
-      <div className={`absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+      <div className={`mt-12 sm:mt-16 lg:mt-20 flex flex-col items-center gap-2 transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
         <div className="w-6 h-10 rounded-full border-2 border-white/20 flex justify-center pt-2">
           <div className="w-1 h-2 bg-white/40 rounded-full animate-scroll-wheel" />
         </div>
