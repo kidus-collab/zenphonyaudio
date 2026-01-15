@@ -13,28 +13,51 @@ This guide will help you set up Stripe payments for Listen Buddy subscriptions.
 1. Go to [Stripe Dashboard](https://dashboard.stripe.com/test/products)
 2. Click "Add product" for each plan:
 
-### Free Trial (Optional)
-- Name: Listen Buddy - Free Trial
-- Description: 5 minutes of audio analysis
-- Price: $0.00 (one-time or free trial)
+### Free Plan
+- Name: Listen Buddy - Free
+- Description: 5 minutes of audio analysis, Plugin chat (limited)
+- Price: $0.00
 
-### Economy Plan
-- Name: Listen Buddy - Economy
-- Description: 30 minutes/month, Basic frequency analysis
-- Price: $7.99/month
-- Recurring: Monthly
+### Basic Plan
+- Name: Listen Buddy - Basic
+- Description: 30 minutes/month, Plugin chat (unlimited)
+- Monthly Price: $7.99/month
+- Yearly Price: $85/year (save $10.88)
+- Recurring: Monthly or Yearly
 
 ### Pro Plan
 - Name: Listen Buddy - Pro
-- Description: 5 hours/month, Full analysis suite
-- Price: $25.00/month
-- Recurring: Monthly
+- Description: 120 minutes/month, Plugin chat (unlimited)
+- Monthly Price: $29.99/month
+- Yearly Price: $320/year (save $39.88)
+- Recurring: Monthly or Yearly
 
-### Master Plan
-- Name: Listen Buddy - Master
-- Description: Unlimited listening, Advanced diagnostics
-- Price: $55.00/month
-- Recurring: Monthly
+### Max Plan
+- Name: Listen Buddy - Max
+- Description: 350 minutes/month, Plugin chat (unlimited)
+- Monthly Price: $69.99/month
+- Yearly Price: $830/year (save $9.88)
+- Recurring: Monthly or Yearly
+
+### Top-up Packs (One-time purchases)
+
+#### Small Top-up
+- Name: Listen Buddy - Small Top-up
+- Description: 20 extra analysis minutes
+- Price: $4.99 (one-time)
+- Effective rate: $0.250/min
+
+#### Medium Top-up
+- Name: Listen Buddy - Medium Top-up
+- Description: 45 extra analysis minutes
+- Price: $9.99 (one-time)
+- Effective rate: $0.222/min (Best value)
+
+#### Large Top-up
+- Name: Listen Buddy - Large Top-up
+- Description: 80 extra analysis minutes
+- Price: $19.99 (one-time)
+- Effective rate: $0.250/min
 
 ## Step 2: Get Your Stripe Keys
 
@@ -52,9 +75,21 @@ Update your `.env.local` file with your Stripe credentials:
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 STRIPE_SECRET_KEY=sk_test_your_actual_secret_key_here
 STRIPE_WEBHOOK_SECRET=whsec_your_actual_webhook_secret_here
-STRIPE_PRICE_ECONOMY=price_your_economy_price_id
-STRIPE_PRICE_PRO=price_your_pro_price_id
-STRIPE_PRICE_MASTER=price_your_master_price_id
+
+# Monthly Prices
+STRIPE_PRICE_BASIC_MONTHLY=price_your_basic_monthly_price_id
+STRIPE_PRICE_PRO_MONTHLY=price_your_pro_monthly_price_id
+STRIPE_PRICE_MAX_MONTHLY=price_your_max_monthly_price_id
+
+# Yearly Prices
+STRIPE_PRICE_BASIC_YEARLY=price_your_basic_yearly_price_id
+STRIPE_PRICE_PRO_YEARLY=price_your_pro_yearly_price_id
+STRIPE_PRICE_MAX_YEARLY=price_your_max_yearly_price_id
+
+# Top-up Packs (one-time)
+STRIPE_PRICE_TOPUP_SMALL=price_your_small_topup_price_id
+STRIPE_PRICE_TOPUP_MEDIUM=price_your_medium_topup_price_id
+STRIPE_PRICE_TOPUP_LARGE=price_your_large_topup_price_id
 ```
 
 **Important:**
@@ -156,7 +191,8 @@ Redirect to /checkout/success
 ### Database Updates
 
 The webhook updates the user's profile in Supabase:
-- `subscription_plan`: The plan ID (economy, pro, master)
+- `subscription_plan`: The plan ID (free, basic, pro, max)
+- `subscription_period`: The billing period (monthly, yearly)
 - `subscription_status`: active, cancelled, or past_due
 - `stripe_customer_id`: Customer ID from Stripe
 - `stripe_subscription_id`: Subscription ID from Stripe

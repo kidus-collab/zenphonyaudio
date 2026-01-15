@@ -76,38 +76,79 @@ const features = [
 const plans = [
   {
     id: "free",
-    name: "Free Trial",
+    name: "Free",
     price: 0,
+    yearlyPrice: 0,
     color: "cyan",
-    features: ["5 min full access", "All listening modes", "Limited to 3 analyses"],
+    minutes: 5,
+    pricePerMin: null, // Free tier
+    features: ["All listening modes", "Limited plugin chat"],
   },
   {
-    id: "economy",
-    name: "Economy",
+    id: "basic",
+    name: "Basic",
     price: 7.99,
+    yearlyPrice: 85,
     color: "emerald",
-    features: ["30 minutes/month", "Basic frequency analysis", "Email support"],
+    minutes: 30,
+    pricePerMin: 0.266,
+    features: ["All listening modes", "Unlimited plugin chat"],
   },
   {
     id: "pro",
     name: "Pro",
-    price: 25.00,
+    price: 29.99,
+    yearlyPrice: 320,
     popular: true,
     color: "violet",
-    features: ["5 hours/month", "Full analysis suite", "Priority support"],
+    minutes: 120,
+    pricePerMin: 0.250,
+    features: ["All listening modes", "Unlimited plugin chat"],
   },
   {
-    id: "master",
-    name: "Master",
-    price: 55.00,
+    id: "max",
+    name: "Max",
+    price: 69.99,
+    yearlyPrice: 830,
     color: "amber",
-    features: ["Unlimited listening", "Advanced diagnostics", "Dedicated support"],
+    minutes: 350,
+    pricePerMin: 0.200,
+    features: ["All listening modes", "Unlimited plugin chat"],
+  },
+]
+
+const topUps = [
+  {
+    id: "small",
+    name: "Small",
+    price: 4.99,
+    minutes: 20,
+    pricePerMin: 0.25,
+    color: "cyan",
+  },
+  {
+    id: "medium",
+    name: "Medium",
+    price: 9.99,
+    minutes: 45,
+    pricePerMin: 0.222,
+    color: "violet",
+    popular: true,
+  },
+  {
+    id: "large",
+    name: "Large",
+    price: 19.99,
+    minutes: 80,
+    pricePerMin: 0.25,
+    color: "amber",
   },
 ]
 
 export default function ListenBuddyPage() {
   const { user } = useAuth()
   const [selectedPlan, setSelectedPlan] = useState("pro")
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "yearly">("monthly")
 
   return (
     <div className="min-h-screen bg-background relative overflow-x-hidden">
@@ -711,7 +752,7 @@ export default function ListenBuddyPage() {
 
         {/* Pricing Section */}
         <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" id="pricing">
-          <div className="max-w-5xl mx-auto">
+          <div className="max-w-6xl mx-auto">
             <div className="text-center mb-8 sm:mb-10 lg:mb-12">
               <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-4 sm:mb-6 px-2">
                 Choose your{" "}
@@ -719,12 +760,37 @@ export default function ListenBuddyPage() {
                   listening level
                 </span>
               </h2>
-              <p className="text-base sm:text-lg lg:text-xl text-white/70 font-medium px-2">
+              <p className="text-base sm:text-lg lg:text-xl text-white/70 font-medium px-2 mb-6 sm:mb-8">
                 The assistant is always free. Upgrade for more listening time.
               </p>
+
+              {/* Billing Period Toggle */}
+              <div className="inline-flex items-center gap-2 p-1.5 rounded-full bg-white/5 border border-white/10">
+                <button
+                  onClick={() => setBillingPeriod("monthly")}
+                  className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-sm sm:text-base font-medium transition-all ${
+                    billingPeriod === "monthly"
+                      ? "bg-violet-500 text-white shadow-lg"
+                      : "text-white/60 hover:text-white/80"
+                  }`}
+                >
+                  Monthly
+                </button>
+                <button
+                  onClick={() => setBillingPeriod("yearly")}
+                  className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-full text-sm sm:text-base font-medium transition-all flex items-center gap-2 ${
+                    billingPeriod === "yearly"
+                      ? "bg-violet-500 text-white shadow-lg"
+                      : "text-white/60 hover:text-white/80"
+                  }`}
+                >
+                  Yearly
+                  <span className="px-2 py-0.5 text-xs font-semibold bg-emerald-500 text-white rounded-full">Save</span>
+                </button>
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
               {plans.map((plan) => {
                 const colorMap: Record<string, { accent: string; bg: string }> = {
                   cyan: { accent: "text-cyan-400", bg: "bg-cyan-500" },
@@ -733,39 +799,61 @@ export default function ListenBuddyPage() {
                   amber: { accent: "text-amber-400", bg: "bg-amber-500" },
                 }
                 const colors = colorMap[plan.color]
+                const displayPrice = billingPeriod === "monthly" ? plan.price : plan.yearlyPrice
+                const priceLabel = billingPeriod === "monthly" ? "/mo" : "/yr"
 
                 return (
                   <div
                     key={plan.id}
                     onClick={() => setSelectedPlan(plan.id)}
-                    className={`relative bg-gradient-to-br from-white/[0.04] to-white/[0.01] rounded-xl sm:rounded-2xl p-4 sm:p-5 lg:p-7 border-2 cursor-pointer transition-all duration-300 ${
+                    className={`relative bg-gradient-to-br from-white/[0.04] to-white/[0.01] rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-8 border-2 cursor-pointer transition-all duration-300 ${
                       selectedPlan === plan.id ? "border-violet-500" : "border-white/10 hover:border-white/20"
                     } ${plan.popular ? "lg:-mt-2 lg:mb-2" : ""}`}
                   >
                     {plan.popular && (
-                      <div className="absolute -top-2.5 sm:-top-3 left-1/2 -translate-x-1/2 px-2 sm:px-3 lg:px-4 py-1 sm:py-1.5 bg-violet-500 text-white text-xs sm:text-sm font-semibold rounded-full whitespace-nowrap">
+                      <div className="absolute -top-2.5 sm:-top-3 left-1/2 -translate-x-1/2 px-3 sm:px-4 py-1 sm:py-1.5 bg-violet-500 text-white text-xs sm:text-sm font-semibold rounded-full whitespace-nowrap">
                         Popular
                       </div>
                     )}
                     <div className="text-center mb-4 sm:mb-5 lg:mb-6">
-                      <h3 className={`text-xs sm:text-sm lg:text-lg font-semibold uppercase tracking-wider mb-2 sm:mb-3 lg:mb-4 ${colors.accent}`}>
+                      <h3 className={`text-sm sm:text-base lg:text-xl font-semibold uppercase tracking-wider mb-3 sm:mb-4 ${colors.accent}`}>
                         {plan.name}
                       </h3>
-                      <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">${plan.price.toFixed(2)}<span className="text-xs sm:text-sm lg:text-lg text-white/60 font-medium">/mo</span></div>
+                      <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
+                        ${displayPrice.toFixed(2)}
+                        <span className="text-sm sm:text-base lg:text-xl text-white/60 font-medium">{priceLabel}</span>
+                      </div>
+                      {billingPeriod === "yearly" && plan.price > 0 && (
+                        <p className="text-xs sm:text-sm text-emerald-400 mt-2">
+                          Save ${((plan.price * 12) - plan.yearlyPrice).toFixed(0)}/year
+                        </p>
+                      )}
+                      {plan.pricePerMin !== null && (
+                        <p className="text-xs sm:text-sm text-white/50 mt-2">
+                          ${plan.pricePerMin.toFixed(3)}/min
+                        </p>
+                      )}
                     </div>
 
-                    <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-5 lg:mb-6">
+                    <div className="flex flex-col items-start gap-1.5 sm:gap-2 mb-5 sm:mb-6 lg:mb-7 px-2 sm:px-3 lg:px-4">
+                      {/* Highlighted Minutes */}
+                      <div className="flex items-center gap-1.5">
+                        <Check className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${colors.accent} shrink-0`} />
+                        <span className={`text-[11px] sm:text-xs lg:text-sm ${colors.accent}`}>
+                          <span className="font-bold">{plan.minutes}</span> <span className="font-bold">min/month</span>
+                        </span>
+                      </div>
                       {plan.features.map((feature, i) => (
-                        <div key={i} className="flex items-start gap-2 sm:gap-3">
-                          <Check className={`w-4 h-4 sm:w-5 sm:h-5 ${colors.accent} shrink-0 mt-0.5`} />
-                          <span className="text-xs sm:text-sm lg:text-base text-white/70 font-medium leading-tight">{feature}</span>
+                        <div key={i} className="flex items-center gap-1.5">
+                          <Check className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${colors.accent} shrink-0`} />
+                          <span className="text-[11px] sm:text-xs lg:text-sm text-white/60 font-medium whitespace-nowrap">{feature}</span>
                         </div>
                       ))}
                     </div>
 
-                    <Link href={user ? `/checkout?plan=${plan.id}` : `/login?redirect=${encodeURIComponent(`/checkout?plan=${plan.id}`)}`}>
+                    <Link href={user ? `/checkout?plan=${plan.id}&billing=${billingPeriod}` : `/login?redirect=${encodeURIComponent(`/checkout?plan=${plan.id}&billing=${billingPeriod}`)}`}>
                       <Button
-                        className={`w-full rounded-lg sm:rounded-xl py-3 sm:py-4 lg:py-6 text-xs sm:text-sm lg:text-base font-semibold transition-all ${
+                        className={`w-full rounded-lg sm:rounded-xl py-3.5 sm:py-4 lg:py-6 text-sm sm:text-base font-semibold transition-all ${
                           selectedPlan === plan.id
                             ? `${colors.bg} text-white`
                             : "bg-white/10 text-white/60 hover:bg-white/20"
@@ -777,6 +865,65 @@ export default function ListenBuddyPage() {
                   </div>
                 )
               })}
+            </div>
+
+            {/* Top-ups Section */}
+            <div className="mt-12 sm:mt-16">
+              <div className="text-center mb-6 sm:mb-8">
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-2 sm:mb-3">
+                  Need more minutes?
+                </h3>
+                <p className="text-sm sm:text-base lg:text-lg text-white/60">
+                  Top up anytime with extra analysis minutes.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 max-w-4xl mx-auto">
+                {topUps.map((topUp) => {
+                  const colorMap: Record<string, { accent: string; bg: string }> = {
+                    cyan: { accent: "text-cyan-400", bg: "bg-cyan-500" },
+                    violet: { accent: "text-violet-400", bg: "bg-violet-500" },
+                    amber: { accent: "text-amber-400", bg: "bg-amber-500" },
+                  }
+                  const colors = colorMap[topUp.color]
+
+                  return (
+                    <div
+                      key={topUp.id}
+                      className={`relative bg-gradient-to-br from-white/[0.04] to-white/[0.01] rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-7 border-2 transition-all duration-300 ${
+                        topUp.popular ? "border-violet-500/50" : "border-white/10 hover:border-white/20"
+                      }`}
+                    >
+                      {topUp.popular && (
+                        <div className="absolute -top-2.5 sm:-top-3 left-1/2 -translate-x-1/2 px-3 sm:px-4 py-1 bg-violet-500 text-white text-xs sm:text-sm font-semibold rounded-full whitespace-nowrap">
+                          Best Value
+                        </div>
+                      )}
+                      <div className="text-center">
+                        <h4 className={`text-sm sm:text-base lg:text-lg font-semibold uppercase tracking-wider mb-3 sm:mb-4 ${colors.accent}`}>
+                          {topUp.name}
+                        </h4>
+                        <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
+                          ${topUp.price.toFixed(2)}
+                        </div>
+                        <p className="text-base sm:text-lg lg:text-xl text-white/70 font-medium mb-1">
+                          {topUp.minutes} minutes
+                        </p>
+                        <p className="text-sm sm:text-base text-white/50 mb-4 sm:mb-5">
+                          ${topUp.pricePerMin.toFixed(3)}/min
+                        </p>
+                        <Link href={user ? `/checkout?topup=${topUp.id}` : `/login?redirect=${encodeURIComponent(`/checkout?topup=${topUp.id}`)}`}>
+                          <Button
+                            className={`w-full rounded-lg sm:rounded-xl py-3 sm:py-4 text-sm sm:text-base font-semibold transition-all ${colors.bg} text-white hover:opacity-90`}
+                          >
+                            Buy Now
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           </div>
         </section>

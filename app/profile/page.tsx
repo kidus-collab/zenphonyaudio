@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { User, Mail, Phone, Building, Briefcase, Camera, LogOut, Loader2, Check, Crown, Zap, Clock } from "lucide-react"
+import { User, Mail, Phone, Building, Briefcase, Camera, LogOut, Loader2, Check, Crown, Zap, Clock, ExternalLink, Headphones } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Footer } from "@/components/footer"
@@ -13,10 +13,10 @@ import Link from "next/link"
 import Image from "next/image"
 
 const planDetails = {
-  free: { name: "Free Trial", color: "cyan", minutes: 5 },
-  economy: { name: "Economy", color: "emerald", minutes: 30 },
-  pro: { name: "Pro", color: "violet", minutes: 300 },
-  master: { name: "Master", color: "amber", minutes: -1 }, // -1 = unlimited
+  free: { name: "Free", color: "cyan", minutes: 5 },
+  basic: { name: "Basic", color: "emerald", minutes: 30 },
+  pro: { name: "Pro", color: "violet", minutes: 120 },
+  max: { name: "Max", color: "amber", minutes: 350 },
 }
 
 export default function ProfilePage() {
@@ -36,6 +36,8 @@ export default function ProfilePage() {
   const [company, setCompany] = useState("")
   const [jobTitle, setJobTitle] = useState("")
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
+
+
 
   // Redirect if not logged in
   useEffect(() => {
@@ -366,8 +368,27 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
+                {/* Open Plugin Link */}
+                <Link href="/plugin" className="block">
+                  <div className="relative group">
+                    <div className="absolute -inset-2 bg-violet-500/10 rounded-3xl blur-xl group-hover:bg-violet-500/20 transition-all" />
+                    <div className="relative bg-white/[0.03] backdrop-blur-2xl rounded-3xl border border-white/[0.08] p-6 group-hover:border-violet-500/30 transition-all">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center">
+                          <Headphones className="w-5 h-5 text-violet-400" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-white">Listen Buddy Plugin</h3>
+                          <p className="text-white/40 text-xs">Open and connect your DAW plugin</p>
+                        </div>
+                        <ExternalLink className="w-5 h-5 text-white/30 group-hover:text-violet-400 transition-colors" />
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+
                 {/* Upgrade Card */}
-                {currentPlan !== "master" && (
+                {currentPlan !== "max" && (
                   <div className="relative">
                     <div className="absolute -inset-2 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 rounded-3xl blur-xl" />
                     <div className="relative bg-gradient-to-br from-violet-900/50 to-fuchsia-900/30 backdrop-blur-2xl rounded-3xl border border-violet-500/20 p-6">

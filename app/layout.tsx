@@ -94,6 +94,11 @@ export const metadata: Metadata = {
   description:
     "Transform audio with AI. Create lifelike voices, enhance audio quality, and produce professional sound with Zenphony's AI-powered audio tools.",
   generator: "v0.app",
+  icons: {
+    icon: "/zenphony-icon.svg",
+    shortcut: "/zenphony-icon.svg",
+    apple: "/zenphony-icon.svg",
+  },
 }
 
 export default function RootLayout({

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    {
+      "path": "/api/cron/session-reminder?type=session-start",
+      "schedule": "0 13 * * 1-5"
+    },
+    {
+      "path": "/api/cron/session-reminder?type=news-release",
+      "schedule": "30 13 * * 1-5"
+    },
+    {
+      "path": "/api/cron/session-reminder?type=indices-open",
+      "schedule": "30 14 * * 1-5"
+    }
+  ]
+}
