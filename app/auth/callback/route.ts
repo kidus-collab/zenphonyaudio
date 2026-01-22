@@ -2,6 +2,9 @@ import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { type EmailOtpType } from '@supabase/supabase-js'
 
+// Use Edge runtime for faster cold starts (50ms vs 1-3s)
+export const runtime = 'edge'
+
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url)
