@@ -112,8 +112,15 @@ export default function ProfilePage() {
   }
 
   const handleSignOut = async () => {
-    await signOut()
-    router.push("/")
+    try {
+      await signOut()
+      // Use window.location for full page reload to clear all cached state
+      window.location.href = "/"
+    } catch (error) {
+      console.error('Sign out error:', error)
+      // Force redirect even on error
+      window.location.href = "/"
+    }
   }
 
   if (authLoading || !user) {

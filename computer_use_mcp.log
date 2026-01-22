@@ -6,3 +6,101 @@
 2026-01-03 04:50:57,963 - src.keyboard_controller - INFO - KeyboardController initialized
 2026-01-03 04:50:57,979 - src.screen_controller - INFO - Screenshot: mss available (will create instance per-call for thread safety)
 2026-01-03 04:51:24,722 - windows-computer-use-mcp - WARNING - System does not support hook registration. Manual hook checking required.
+2026-01-08 00:20:37,847 - windows-computer-use-mcp - INFO - Starting Windows Computer Use MCP Server...
+2026-01-08 00:20:37,847 - windows-computer-use-mcp - INFO - Pre-initializing system and warming up models...
+2026-01-08 00:20:37,847 - src.computer_use_system - INFO - Initializing ComputerUseSystem...
+2026-01-08 00:20:37,847 - src.mouse_controller - INFO - DPI Awareness: Per-Monitor V2
+2026-01-08 00:20:37,847 - src.mouse_controller - INFO - MouseController initialized
+2026-01-08 00:20:37,847 - src.keyboard_controller - INFO - KeyboardController initialized
+2026-01-08 00:20:37,863 - src.screen_controller - INFO - Screenshot: mss available (will create instance per-call for thread safety)
+2026-01-08 00:21:02,902 - windows-computer-use-mcp - WARNING - System does not support hook registration. Manual hook checking required.
+2026-01-08 00:43:17,095 - src.screen_controller - WARNING - OCR pass timed out after 10s
+2026-01-08 00:43:17,095 - src.screen_controller - WARNING - OCR pass 1 failed: OCR timeout
+2026-01-08 01:28:56,910 - windows-computer-use-mcp - INFO - Starting Windows Computer Use MCP Server...
+2026-01-08 01:28:56,910 - windows-computer-use-mcp - INFO - Pre-initializing system and warming up models...
+2026-01-08 01:28:56,910 - src.computer_use_system - INFO - Initializing ComputerUseSystem...
+2026-01-08 01:28:56,911 - src.mouse_controller - INFO - DPI Awareness: Per-Monitor V2
+2026-01-08 01:28:56,912 - src.mouse_controller - INFO - MouseController initialized
+2026-01-08 01:28:56,912 - src.keyboard_controller - INFO - KeyboardController initialized
+2026-01-08 01:28:56,928 - src.screen_controller - INFO - Screenshot: mss available (will create instance per-call for thread safety)
+2026-01-08 01:29:15,407 - windows-computer-use-mcp - WARNING - System does not support hook registration. Manual hook checking required.
+2026-01-08 01:49:36,611 - src.screen_controller - WARNING - OCR pass timed out after 10s
+2026-01-08 01:49:36,611 - src.screen_controller - WARNING - OCR pass 1 failed: OCR timeout
+2026-01-08 02:09:50,345 - src.screen_controller - WARNING - OCR pass timed out after 10s
+2026-01-08 02:09:50,345 - src.screen_controller - WARNING - OCR pass 1 failed: OCR timeout
+2026-01-08 07:03:47,156 - src.screen_controller - WARNING - OCR pass timed out after 10s
+2026-01-08 07:03:47,158 - src.screen_controller - WARNING - OCR pass 1 failed: OCR timeout
+2026-01-08 07:48:16,646 - src.screen_controller - WARNING - OCR pass timed out after 10s
+2026-01-08 07:48:16,647 - src.screen_controller - WARNING - OCR pass 1 failed: OCR timeout
+2026-01-08 07:52:40,085 - src.screen_controller - WARNING - OCR pass timed out after 10s
+2026-01-08 07:52:40,085 - src.screen_controller - WARNING - OCR pass 1 failed: OCR timeout
+2026-01-09 03:18:25,200 - windows-computer-use-mcp - INFO - Starting Windows Computer Use MCP Server...
+2026-01-09 03:18:25,200 - windows-computer-use-mcp - INFO - Pre-initializing system and warming up models...
+2026-01-09 03:18:25,200 - src.computer_use_system - INFO - Initializing ComputerUseSystem...
+2026-01-09 03:18:25,200 - src.mouse_controller - INFO - DPI Awareness: Per-Monitor V2
+2026-01-09 03:18:25,200 - src.mouse_controller - INFO - MouseController initialized
+2026-01-09 03:18:25,200 - src.keyboard_controller - INFO - KeyboardController initialized
+2026-01-09 03:18:25,207 - src.screen_controller - INFO - Screenshot: mss available (will create instance per-call for thread safety)
+2026-01-09 03:18:55,903 - windows-computer-use-mcp - WARNING - System does not support hook registration. Manual hook checking required.
+2026-01-10 00:44:13,880 - windows-computer-use-mcp - INFO - Starting Windows Computer Use MCP Server...
+2026-01-10 00:44:13,884 - windows-computer-use-mcp - INFO - Pre-initializing system and warming up models...
+2026-01-10 00:44:13,885 - src.computer_use_system - INFO - Initializing ComputerUseSystem...
+2026-01-10 00:44:13,886 - src.mouse_controller - INFO - DPI Awareness: Per-Monitor V2
+2026-01-10 00:44:13,886 - src.mouse_controller - INFO - MouseController initialized
+2026-01-10 00:44:13,886 - src.keyboard_controller - INFO - KeyboardController initialized
+2026-01-10 00:44:13,906 - src.screen_controller - INFO - Screenshot: mss available (will create instance per-call for thread safety)
+2026-01-10 00:44:35,006 - windows-computer-use-mcp - WARNING - System does not support hook registration. Manual hook checking required.
+2026-01-11 10:07:56,212 - windows-computer-use-mcp - INFO - Starting Windows Computer Use MCP Server...
+2026-01-11 10:07:56,212 - windows-computer-use-mcp - INFO - Pre-initializing system and warming up models...
+2026-01-11 10:07:56,212 - src.computer_use_system - INFO - Initializing ComputerUseSystem...
+2026-01-11 10:07:56,212 - src.mouse_controller - INFO - DPI Awareness: Per-Monitor V2
+2026-01-11 10:07:56,212 - src.mouse_controller - INFO - MouseController initialized
+2026-01-11 10:07:56,212 - src.keyboard_controller - INFO - KeyboardController initialized
+2026-01-11 10:07:56,229 - src.screen_controller - INFO - Screenshot: mss available (will create instance per-call for thread safety)
+2026-01-11 10:08:18,685 - windows-computer-use-mcp - WARNING - System does not support hook registration. Manual hook checking required.
+2026-01-13 01:57:07,303 - windows-computer-use-mcp - INFO - Starting Windows Computer Use MCP Server...
+2026-01-13 01:57:07,303 - windows-computer-use-mcp - INFO - Pre-initializing system and warming up models...
+2026-01-13 01:57:07,303 - src.computer_use_system - INFO - Initializing ComputerUseSystem...
+2026-01-13 01:57:07,303 - src.mouse_controller - INFO - DPI Awareness: Per-Monitor V2
+2026-01-13 01:57:07,303 - src.mouse_controller - INFO - MouseController initialized
+2026-01-13 01:57:07,303 - src.keyboard_controller - INFO - KeyboardController initialized
+2026-01-13 01:57:07,313 - src.screen_controller - INFO - Screenshot: mss available (will create instance per-call for thread safety)
+2026-01-13 01:57:24,770 - windows-computer-use-mcp - WARNING - System does not support hook registration. Manual hook checking required.
+2026-01-14 07:42:57,724 - src.screen_controller - WARNING - OCR pass timed out after 10s
+2026-01-14 07:42:57,724 - src.screen_controller - WARNING - OCR pass 1 failed: OCR timeout
+2026-01-16 10:29:49,171 - windows-computer-use-mcp - INFO - Starting Windows Computer Use MCP Server...
+2026-01-16 10:29:49,172 - windows-computer-use-mcp - INFO - Pre-initializing system and warming up models...
+2026-01-16 10:29:49,172 - src.computer_use_system - INFO - Initializing ComputerUseSystem...
+2026-01-16 10:29:49,173 - src.mouse_controller - INFO - DPI Awareness: Per-Monitor V2
+2026-01-16 10:29:49,174 - src.mouse_controller - INFO - MouseController initialized
+2026-01-16 10:29:49,174 - src.keyboard_controller - INFO - KeyboardController initialized
+2026-01-16 10:29:49,190 - src.screen_controller - INFO - Screenshot: mss available (will create instance per-call for thread safety)
+2026-01-16 10:30:08,523 - windows-computer-use-mcp - WARNING - System does not support hook registration. Manual hook checking required.
+2026-01-17 22:48:28,901 - windows-computer-use-mcp - INFO - Starting Windows Computer Use MCP Server...
+2026-01-17 22:48:28,902 - windows-computer-use-mcp - INFO - Pre-initializing system and warming up models...
+2026-01-17 22:48:28,902 - src.computer_use_system - INFO - Initializing ComputerUseSystem...
+2026-01-17 22:48:28,903 - src.mouse_controller - INFO - DPI Awareness: Per-Monitor V2
+2026-01-17 22:48:28,903 - src.mouse_controller - INFO - MouseController initialized
+2026-01-17 22:48:28,904 - src.keyboard_controller - INFO - KeyboardController initialized
+2026-01-17 22:48:28,933 - src.screen_controller - INFO - Screenshot: mss available (will create instance per-call for thread safety)
+2026-01-17 22:49:03,060 - windows-computer-use-mcp - WARNING - System does not support hook registration. Manual hook checking required.
+2026-01-17 23:24:40,597 - windows-computer-use-mcp - INFO - Starting Windows Computer Use MCP Server...
+2026-01-17 23:24:40,597 - windows-computer-use-mcp - INFO - Pre-initializing system and warming up models...
+2026-01-17 23:24:40,597 - src.computer_use_system - INFO - Initializing ComputerUseSystem...
+2026-01-17 23:24:40,598 - src.mouse_controller - INFO - DPI Awareness: Per-Monitor V2
+2026-01-17 23:24:40,598 - src.mouse_controller - INFO - MouseController initialized
+2026-01-17 23:24:40,599 - src.keyboard_controller - INFO - KeyboardController initialized
+2026-01-17 23:24:40,613 - src.screen_controller - INFO - Screenshot: mss available (will create instance per-call for thread safety)
+2026-01-17 23:25:02,183 - windows-computer-use-mcp - WARNING - System does not support hook registration. Manual hook checking required.
+2026-01-18 00:57:59,182 - src.screen_controller - WARNING - OCR pass timed out after 10s
+2026-01-18 00:57:59,182 - src.screen_controller - WARNING - OCR pass 1 failed: OCR timeout
+2026-01-18 00:58:31,857 - src.screen_controller - WARNING - OCR pass timed out after 10s
+2026-01-18 00:58:31,857 - src.screen_controller - WARNING - OCR pass 1 failed: OCR timeout
+2026-01-20 00:16:18,805 - windows-computer-use-mcp - INFO - Starting Windows Computer Use MCP Server...
+2026-01-20 00:16:18,805 - windows-computer-use-mcp - INFO - Pre-initializing system and warming up models...
+2026-01-20 00:16:18,806 - src.computer_use_system - INFO - Initializing ComputerUseSystem...
+2026-01-20 00:16:18,806 - src.mouse_controller - INFO - DPI Awareness: Per-Monitor V2
+2026-01-20 00:16:18,806 - src.mouse_controller - INFO - MouseController initialized
+2026-01-20 00:16:18,807 - src.keyboard_controller - INFO - KeyboardController initialized
+2026-01-20 00:16:18,819 - src.screen_controller - INFO - Screenshot: mss available (will create instance per-call for thread safety)
+2026-01-20 00:16:43,092 - windows-computer-use-mcp - WARNING - System does not support hook registration. Manual hook checking required.

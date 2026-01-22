@@ -16,7 +16,7 @@ export default function PluginConnectPage() {
   const [openingPlugin, setOpeningPlugin] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [pluginUrl] = useState(process.env.NEXT_PUBLIC_PLUGIN_URL || "http://localhost:3005")
+  const [pluginUrl] = useState(process.env.NEXT_PUBLIC_PLUGIN_URL || "listenbuddy://auth")
   const [autoOpening, setAutoOpening] = useState(true)
   const hasAutoOpened = useRef(false)
 
@@ -55,11 +55,22 @@ export default function PluginConnectPage() {
         throw new Error(data.error || 'Failed to generate token')
       }
 
-      // Open the plugin with the auth token
-      // Use a unique window name to ensure a fresh tab opens
-      const windowName = `listenbuddy_${Date.now()}`
-      window.open(data.plugin_url, windowName)
-      setSuccess(true)
+      // Check if this is a native app deep link (custom URL scheme)
+      const isDeepLink = data.plugin_url.startsWith('listenbuddy://') ||
+                         !data.plugin_url.startsWith('http')
+
+      if (isDeepLink) {
+        // For native apps, use location.href to trigger the deep link
+        // This will open the JUCE app/plugin with the auth parameters
+        console.log('[Plugin] Opening native app with deep link:', data.plugin_url)
+        window.location.href = data.plugin_url
+        setSuccess(true)
+      } else {
+        // For web-based plugin, open in a new tab
+        const windowName = `listenbuddy_${Date.now()}`
+        window.open(data.plugin_url, windowName)
+        setSuccess(true)
+      }
     } catch (err) {
       console.error('Error opening plugin:', err)
       setError(err instanceof Error ? err.message : 'Failed to open plugin')
@@ -116,12 +127,12 @@ export default function PluginConnectPage() {
 
               {/* Title */}
               <h1 className="text-2xl sm:text-3xl font-bold text-white text-center mb-2">
-                {openingPlugin ? "Connecting..." : "Listen Buddy Plugin"}
+                {openingPlugin ? "Connecting..." : "Listen Buddy"}
               </h1>
               <p className="text-white/50 text-center mb-8">
                 {openingPlugin
-                  ? "Opening plugin with your account..."
-                  : "Open the DAW WebUI plugin with your account"}
+                  ? "Opening app with your account..."
+                  : "Open the standalone app or DAW plugin with your account"}
               </p>
 
               {/* User Info */}
@@ -151,7 +162,9 @@ export default function PluginConnectPage() {
               {/* Success Message */}
               {success && (
                 <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-center text-sm">
-                  Plugin opened! Check your new browser tab.
+                  {pluginUrl.startsWith('listenbuddy://')
+                    ? "Opening Listen Buddy app... Check if it launched!"
+                    : "Plugin opened! Check your new browser tab."}
                 </div>
               )}
 
@@ -173,12 +186,14 @@ export default function PluginConnectPage() {
                 ) : (
                   <ExternalLink className="w-5 h-5 mr-2" />
                 )}
-                {openingPlugin ? "Opening..." : "Open in Plugin"}
+                {openingPlugin ? "Opening..." : "Open in App"}
               </Button>
 
               {/* Help Text */}
               <p className="text-white/30 text-xs text-center mt-4">
-                Opens in a new window with secure one-time login
+                {pluginUrl.startsWith('listenbuddy://')
+                  ? "Opens Listen Buddy with secure one-time login"
+                  : "Opens in a new window with secure one-time login"}
               </p>
 
               {/* Divider */}

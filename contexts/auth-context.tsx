@@ -133,15 +133,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut()
-    if (error) {
-      console.error('Error signing out:', error)
-      throw error
+    console.log('[AuthContext] signOut called')
+    try {
+      // Use global scope to sign out from all devices/tabs
+      // Add timeout because Supabase SDK sometimes hangs
+      const timeoutPromise = new Promise<{ error: null }>((resolve) => {
+        setTimeout(() => {
+          console.log('[AuthContext] signOut timeout - proceeding anyway')
+          resolve({ error: null })
+        }, 3000)
+      })
+
+      const signOutPromise = supabase.auth.signOut({ scope: 'global' })
+
+      const { error } = await Promise.race([signOutPromise, timeoutPromise])
+
+      if (error) {
+        console.error('[AuthContext] Error signing out:', error)
+      } else {
+        console.log('[AuthContext] signOut successful')
+      }
+
+      // Always clear local auth states
+      setUser(null)
+      setSession(null)
+      setProfile(null)
+    } catch (err) {
+      console.error('[AuthContext] signOut exception:', err)
+      // Even if there's an error, clear the local state
+      setUser(null)
+      setSession(null)
+      setProfile(null)
     }
-    // Explicitly clear all auth states
-    setUser(null)
-    setSession(null)
-    setProfile(null)
   }
 
   const updateProfile = async (updates: Partial<Profile>) => {

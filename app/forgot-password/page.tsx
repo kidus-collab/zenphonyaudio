@@ -2,9 +2,9 @@
 
 import type React from "react"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Mail, Loader2, CheckCircle2 } from "lucide-react"
+import { ArrowLeft, Mail, Loader2, CheckCircle2, Clock } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ZenphonyLogo } from "@/components/zenphony-logo"
 import { Aurora } from "@/components/aurora"
 import { createClient } from "@/lib/supabase/client"
@@ -14,6 +14,24 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [rateLimitCountdown, setRateLimitCountdown] = useState<number | null>(null)
+
+  // Countdown timer for rate limit
+  useEffect(() => {
+    if (rateLimitCountdown === null || rateLimitCountdown <= 0) return
+
+    const timer = setInterval(() => {
+      setRateLimitCountdown((prev) => {
+        if (prev === null || prev <= 1) {
+          setError(null)
+          return null
+        }
+        return prev - 1
+      })
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [rateLimitCountdown])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -28,15 +46,33 @@ export default function ForgotPasswordPage() {
 
     try {
       const supabase = createClient()
-      // Redirect to auth callback which will verify the token and then redirect to reset-password
-      const redirectUrl = `${process.env.NEXT_PUBLIC_BASE_URL || window.location.origin}/auth/callback`
+      // Redirect directly to reset-password - it will handle the code exchange
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || window.location.origin
+      const redirectUrl = `${baseUrl}/reset-password`
+
+      console.log('[ForgotPassword] Sending reset email with redirect:', redirectUrl)
 
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: redirectUrl,
       })
 
       if (error) {
-        setError(error.message)
+        console.log('[ForgotPassword] Error:', error.message, error)
+
+        // Check for rate limit error
+        const errorMsg = error.message?.toLowerCase() || ''
+        const isRateLimit = errorMsg.includes('rate limit') ||
+                           errorMsg.includes('rate_limit') ||
+                           errorMsg.includes('too many') ||
+                           errorMsg.includes('exceeded') ||
+                           error.status === 429
+
+        if (isRateLimit) {
+          setError("Email rate limit exceeded. Please wait before trying again.")
+          setRateLimitCountdown(60) // Supabase default: 60 seconds between emails
+        } else {
+          setError(error.message)
+        }
       } else {
         setSuccess(true)
       }
@@ -148,8 +184,25 @@ export default function ForgotPasswordPage() {
           </p>
 
           {error && (
-            <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm mb-6">
-              {error}
+            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm mb-6">
+              <div className="flex items-start gap-3">
+                {rateLimitCountdown !== null && (
+                  <Clock className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                )}
+                <div>
+                  <p>{error}</p>
+                  {rateLimitCountdown !== null && (
+                    <p className="mt-2 text-amber-400 font-medium">
+                      Try again in {rateLimitCountdown} second{rateLimitCountdown !== 1 ? 's' : ''}
+                    </p>
+                  )}
+                  {rateLimitCountdown !== null && (
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Supabase allows 4 password reset emails per hour.
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           )}
 
@@ -170,11 +223,13 @@ export default function ForgotPasswordPage() {
 
             <Button
               type="submit"
-              disabled={loading}
+              disabled={loading || rateLimitCountdown !== null}
               className="w-full h-14 rounded-2xl bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold text-base shadow-[0_8px_32px_rgba(139,92,246,0.4)] hover:shadow-[0_8px_40px_rgba(139,92,246,0.6)] transition-all duration-300 border-0 disabled:opacity-50"
             >
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
+              ) : rateLimitCountdown !== null ? (
+                `Wait ${rateLimitCountdown}s`
               ) : (
                 "Reset password"
               )}
