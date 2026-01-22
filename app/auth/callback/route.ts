@@ -4,7 +4,16 @@ import { type EmailOtpType } from '@supabase/supabase-js'
 
 export async function GET(request: Request) {
   try {
-    const { searchParams, origin } = new URL(request.url)
+    const url = new URL(request.url)
+    const searchParams = url.searchParams
+
+    // Get the correct origin - use X-Forwarded-Host for proxies like ngrok, or NEXT_PUBLIC_BASE_URL
+    const forwardedHost = request.headers.get('x-forwarded-host')
+    const forwardedProto = request.headers.get('x-forwarded-proto') || 'https'
+    const origin = forwardedHost
+      ? `${forwardedProto}://${forwardedHost}`
+      : process.env.NEXT_PUBLIC_BASE_URL || url.origin
+
     const code = searchParams.get('code')
     const token_hash = searchParams.get('token_hash')
     const type = searchParams.get('type') as EmailOtpType | null
@@ -13,6 +22,9 @@ export async function GET(request: Request) {
     const errorDescription = searchParams.get('error_description')
 
     console.log('[Auth Callback] Received request:', {
+      origin,
+      forwardedHost,
+      urlOrigin: url.origin,
       hasCode: !!code,
       hasTokenHash: !!token_hash,
       type,
@@ -68,7 +80,42 @@ export async function GET(request: Request) {
         )
       }
 
-      console.log('[Auth Callback] Successfully exchanged code for session')
+      console.log('[Auth Callback] Successfully exchanged code for session, user:', data.user?.email)
+
+      // Check if this is a password recovery flow
+      // After PKCE exchange, check the session's aal (authenticator assurance level) or user recovery state
+      // The session from password recovery has specific characteristics
+      const session = data.session
+      const user = data.user
+
+      // Check multiple indicators for password recovery:
+      // 1. Type parameter (if Supabase passes it)
+      // 2. User's recovery_sent_at was recently set
+      // 3. The AMR (Authentication Methods Reference) includes recovery
+      const amr = session?.user?.amr || []
+      const hasRecoveryAmr = amr.some((a: { method: string }) => a.method === 'recovery' || a.method === 'otp')
+      const recentRecovery = user?.recovery_sent_at &&
+        (new Date().getTime() - new Date(user.recovery_sent_at).getTime()) < 10 * 60 * 1000 // within 10 minutes
+
+      const isRecovery = type === 'recovery' ||
+        hasRecoveryAmr ||
+        recentRecovery ||
+        next === '/reset-password' ||
+        searchParams.get('redirect_to')?.includes('reset-password')
+
+      console.log('[Auth Callback] Recovery check:', {
+        type,
+        hasRecoveryAmr,
+        recentRecovery,
+        amr,
+        isRecovery
+      })
+
+      if (isRecovery) {
+        console.log('[Auth Callback] PKCE Password recovery - redirecting to reset-password')
+        return NextResponse.redirect(`${origin}/reset-password`)
+      }
+
       return NextResponse.redirect(`${origin}${next}`)
     }
 
@@ -77,9 +124,9 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/auth/auth-code-error?error=${encodeURIComponent('No authentication code provided')}`)
   } catch (err) {
     console.error('[Auth Callback] Unexpected error:', err)
-    const { origin } = new URL(request.url)
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || new URL(request.url).origin
     return NextResponse.redirect(
-      `${origin}/auth/auth-code-error?error=${encodeURIComponent('An unexpected error occurred')}`
+      `${baseUrl}/auth/auth-code-error?error=${encodeURIComponent('An unexpected error occurred')}`
     )
   }
 }

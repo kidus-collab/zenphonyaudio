@@ -116,9 +116,12 @@ export function Navigation() {
                           try {
                             await signOut()
                             setUserMenuOpen(false)
-                            router.push("/")
+                            // Use window.location for full page reload to clear all cached state
+                            window.location.href = "/"
                           } catch (error) {
                             console.error('Sign out error:', error)
+                            // Force redirect even on error
+                            window.location.href = "/"
                           }
                         }}
                         className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-white/5 transition-colors"
@@ -212,9 +215,12 @@ export function Navigation() {
                         try {
                           await signOut()
                           setMobileMenuOpen(false)
-                          router.push("/")
+                          // Use window.location for full page reload to clear all cached state
+                          window.location.href = "/"
                         } catch (error) {
                           console.error('Sign out error:', error)
+                          // Force redirect even on error
+                          window.location.href = "/"
                         }
                       }}
                       className="w-full rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 font-medium py-3 transition-colors"

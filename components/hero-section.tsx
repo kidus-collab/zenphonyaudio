@@ -12,7 +12,7 @@ export function HeroSection() {
   }, [])
 
   return (
-    <section className="relative min-h-screen w-full overflow-hidden flex flex-col items-center justify-center px-6">
+    <section className="relative min-h-screen w-full overflow-hidden flex flex-col items-center justify-center px-6 pt-24 sm:pt-28 lg:pt-32">
       {/* Main Content */}
       <div className={`relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
 

@@ -35,13 +35,14 @@ export async function POST(request: NextRequest) {
 
     // Parse request body for plugin URL
     const body = await request.json().catch(() => ({}))
-    const pluginUrl = body.pluginUrl || "http://localhost:3005"
+    const pluginUrl = body.pluginUrl || process.env.NEXT_PUBLIC_PLUGIN_URL || "listenbuddy://auth"
 
     // Generate a secure random token
     const token = `plt_${crypto.randomBytes(32).toString("hex")}`
 
-    // Token expires in 5 minutes (short-lived for security)
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000)
+    // Token expires in 30 days (for persistent sessions in native app)
+    // The token is validated on each API call, so it can be revoked anytime
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
 
     const admin = getSupabaseAdmin()
 
@@ -74,12 +75,13 @@ export async function POST(request: NextRequest) {
     // Use request origin (most reliable) - NEXT_PUBLIC_BASE_URL might point to plugin URL
     const websiteOrigin = request.headers.get('origin') || request.nextUrl.origin
 
-    // Build the plugin URL with the token and api_origin
-    const pluginAuthUrl = `${pluginUrl}?auth_token=${token}&api_origin=${encodeURIComponent(websiteOrigin)}`
+    // Build the plugin URL with the token, user_id, and api_origin
+    const pluginAuthUrl = `${pluginUrl}?auth_token=${token}&user_id=${user.id}&api_origin=${encodeURIComponent(websiteOrigin)}`
 
     return NextResponse.json({
       success: true,
       token: token,
+      user_id: user.id,
       expires_at: expiresAt.toISOString(),
       plugin_url: pluginAuthUrl,
     })
