@@ -1,16 +1,21 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, lazy, Suspense } from "react"
 import { useRouter } from "next/navigation"
-import { User, Mail, Phone, Building, Briefcase, Camera, LogOut, Loader2, Check, Crown, Zap, Clock, ExternalLink, Headphones } from "lucide-react"
+import { User, Mail, Phone, Building, Briefcase, Camera, LogOut, Loader2, Check, ExternalLink, Headphones } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Footer } from "@/components/footer"
 import { ColorBends } from "@/components/color-bends"
 import { useAuth } from "@/contexts/auth-context"
 import { createClient } from "@/lib/supabase/client"
+import { SubscriptionDetailsCard } from "@/components/profile/subscription-details-card"
 import Link from "next/link"
 import Image from "next/image"
+
+const ProfileCharts = lazy(() =>
+  import("@/components/profile/profile-charts").then((m) => ({ default: m.ProfileCharts }))
+)
 
 const planDetails = {
   free: { name: "Free", color: "cyan", minutes: 5 },
@@ -336,44 +341,14 @@ export default function ProfilePage() {
 
               {/* Sidebar */}
               <div className="space-y-6">
-                {/* Usage Card */}
-                <div className="relative">
-                  <div className="absolute -inset-2 bg-violet-500/10 rounded-3xl blur-xl" />
-                  <div className="relative bg-white/[0.03] backdrop-blur-2xl rounded-3xl border border-white/[0.08] p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center">
-                        <Clock className="w-5 h-5 text-violet-400" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-white">Listening Time</h3>
-                        <p className="text-white/40 text-xs">This month</p>
-                      </div>
-                    </div>
-
-                    {isUnlimited ? (
-                      <div className="text-center py-4">
-                        <Zap className="w-8 h-8 text-amber-400 mx-auto mb-2" />
-                        <p className="text-white font-semibold">Unlimited</p>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="flex items-baseline gap-1 mb-2">
-                          <span className="text-3xl font-black text-white">{minutesUsed}</span>
-                          <span className="text-white/40">/ {minutesLimit} min</span>
-                        </div>
-                        <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full transition-all"
-                            style={{ width: `${Math.min((minutesUsed / minutesLimit) * 100, 100)}%` }}
-                          />
-                        </div>
-                        <p className="text-white/40 text-xs mt-2">
-                          {minutesLimit - minutesUsed} minutes remaining
-                        </p>
-                      </>
-                    )}
-                  </div>
-                </div>
+                {/* Subscription Details Card */}
+                <SubscriptionDetailsCard
+                  currentPlan={currentPlan}
+                  subscriptionStatus={profile?.subscription_status || "active"}
+                  minutesUsed={minutesUsed}
+                  minutesLimit={minutesLimit}
+                  isUnlimited={isUnlimited}
+                />
 
                 {/* Open Plugin Link */}
                 <Link href="/plugin" className="block">
@@ -394,24 +369,6 @@ export default function ProfilePage() {
                   </div>
                 </Link>
 
-                {/* Upgrade Card */}
-                {currentPlan !== "max" && (
-                  <div className="relative">
-                    <div className="absolute -inset-2 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 rounded-3xl blur-xl" />
-                    <div className="relative bg-gradient-to-br from-violet-900/50 to-fuchsia-900/30 backdrop-blur-2xl rounded-3xl border border-violet-500/20 p-6">
-                      <h3 className="font-semibold text-white mb-2">Upgrade Plan</h3>
-                      <p className="text-white/50 text-sm mb-4">
-                        Get more listening time and unlock advanced features
-                      </p>
-                      <Link href="/products/listen-buddy#pricing">
-                        <Button className="w-full rounded-xl bg-white text-violet-900 hover:bg-white/90 font-semibold">
-                          View Plans
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                )}
-
                 {/* Sign Out */}
                 <button
                   onClick={handleSignOut}
@@ -421,6 +378,22 @@ export default function ProfilePage() {
                   Sign Out
                 </button>
               </div>
+            </div>
+
+            {/* Charts Section */}
+            <div className="mt-8">
+              <Suspense
+                fallback={
+                  <div className="relative">
+                    <div className="absolute -inset-2 bg-violet-500/10 rounded-3xl blur-xl" />
+                    <div className="relative bg-white/[0.03] backdrop-blur-2xl rounded-3xl border border-white/[0.08] p-6 flex items-center justify-center py-16">
+                      <Loader2 className="w-6 h-6 animate-spin text-white/20" />
+                    </div>
+                  </div>
+                }
+              >
+                <ProfileCharts currentPlan={currentPlan} minutesLimit={minutesLimit} />
+              </Suspense>
             </div>
           </div>
         </main>

@@ -2,7 +2,7 @@
 
 A modern, full-stack audio technology platform built with Next.js 16, featuring Supabase authentication and Stripe subscription payments.
 
-> **Last Updated:** January 2026
+> **Last Updated:** February 2026
 
 ## Table of Contents
 
@@ -13,6 +13,7 @@ A modern, full-stack audio technology platform built with Next.js 16, featuring 
 - [Architecture Overview](#architecture-overview)
 - [Authentication System](#authentication-system)
 - [Stripe Integration](#stripe-integration)
+- [Subscription and Billing Analytics](#subscription-and-billing-analytics)
 - [Database Schema](#database-schema)
 - [Environment Variables](#environment-variables)
 - [Getting Started](#getting-started)
@@ -105,7 +106,18 @@ STRIPE_PRICE_MASTER=price_...
 zenphony-audio-website/
 ├── app/                          # Next.js App Router pages
 │   ├── api/                      # API route handlers
+│   │   ├── billing-history/      # Billing event history endpoint
+│   │   │   └── route.ts
 │   │   ├── checkout/             # Stripe checkout session creation
+│   │   │   └── route.ts
+│   │   ├── cron/                 # Scheduled jobs
+│   │   │   └── usage-snapshot/   # Daily usage snapshot cron
+│   │   │       └── route.ts
+│   │   ├── plan-recommendation/  # AI plan recommendation endpoint
+│   │   │   └── route.ts
+│   │   ├── subscription-details/ # Subscription details endpoint
+│   │   │   └── route.ts
+│   │   ├── usage-history/        # Usage history over time endpoint
 │   │   │   └── route.ts
 │   │   └── stripe-webhook/       # Stripe webhook handler
 │   │       └── route.ts
@@ -152,6 +164,13 @@ zenphony-audio-website/
 │   │   ├── form.tsx
 │   │   ├── input.tsx
 │   │   └── ... (and many more)
+│   ├── profile/                  # Profile page components
+│   │   ├── subscription-details-card.tsx  # Subscription info card
+│   │   ├── profile-charts.tsx             # Charts container
+│   │   ├── usage-over-time-chart.tsx      # Usage analytics chart
+│   │   ├── billing-history-chart.tsx      # Billing history chart
+│   │   ├── plan-comparison-chart.tsx      # Plan comparison chart
+│   │   └── plan-recommendation-card.tsx   # Plan recommendation card
 │   ├── aurora.tsx                # Animated background effect
 │   ├── circular-waveform.tsx     # Audio waveform visualization
 │   ├── color-bends.tsx           # Color gradient effects
@@ -184,6 +203,7 @@ zenphony-audio-website/
 │   │   ├── server.ts             # Server client (server components)
 │   │   ├── middleware.ts         # Session refresh middleware
 │   │   └── database.types.ts     # TypeScript types for database
+│   ├── plan-recommendation.ts    # Plan recommendation engine
 │   └── utils.ts                  # General utilities (cn function)
 │
 ├── public/                       # Static assets
@@ -191,7 +211,9 @@ zenphony-audio-website/
 │
 ├── styles/                       # Global styles
 │
-├── supabase/                     # Supabase configuration
+├── supabase/                     # Supabase configuration & migrations
+│   └── migrations/
+│       └── 005_usage_and_billing_history.sql
 │
 ├── .env.local                    # Environment variables (not in git)
 ├── .env.local.example            # Example env file
@@ -529,6 +551,67 @@ STRIPE_PRICE_MASTER=price_...
 
 ---
 
+## Subscription and Billing Analytics
+
+### Overview
+
+The profile page includes a comprehensive subscription management and analytics dashboard. Users can view their current plan details, track usage over time, review billing history, compare plans, and receive personalized plan recommendations.
+
+### Subscription Details Card
+
+Located on the profile page (`components/profile/subscription-details-card.tsx`), this card displays:
+
+- **Plan badge** with color-coded tier indicator (Free, Economy, Pro, Master)
+- **Billing cycle** information (next billing date, amount)
+- **Payment method** display (last 4 digits of card on file)
+- **Usage tracking** with progress bar showing minutes used vs. limit
+
+### Usage Analytics Charts
+
+Built with **Recharts**, the profile page includes three interactive charts (`components/profile/profile-charts.tsx`):
+
+| Chart | Component | Description |
+|-------|-----------|-------------|
+| Usage Over Time | `usage-over-time-chart.tsx` | Line chart showing daily listening minutes over the past 90 days |
+| Billing History | `billing-history-chart.tsx` | Bar chart displaying monthly billing amounts and payment events |
+| Plan Comparison | `plan-comparison-chart.tsx` | Comparison chart showing features and limits across all plans |
+
+### Plan Recommendation System
+
+The plan recommendation engine (`lib/plan-recommendation.ts`) analyzes the user's 90-day usage history to suggest the most cost-effective plan:
+
+- Analyzes average daily usage, peak usage, and trend direction
+- Compares current plan limits against actual usage patterns
+- Recommends upgrades when usage consistently exceeds 80% of the plan limit
+- Recommends downgrades when usage is consistently below 30% of the plan limit
+- Displayed via the `plan-recommendation-card.tsx` component on the profile page
+
+### API Routes for Analytics
+
+| Route | Method | Description |
+|-------|--------|-------------|
+| `/api/subscription-details` | GET | Returns detailed subscription info (plan, billing cycle, payment method) |
+| `/api/usage-history` | GET | Returns daily usage snapshots for the past 90 days |
+| `/api/billing-history` | GET | Returns billing events (payments, refunds, plan changes) |
+| `/api/plan-recommendation` | GET | Returns a personalized plan recommendation based on usage analysis |
+| `/api/cron/usage-snapshot` | GET | Cron endpoint that captures a daily usage snapshot for each active user |
+
+### Daily Usage Snapshot Cron Job
+
+The `/api/cron/usage-snapshot` endpoint is triggered daily via a Vercel cron job configured in `vercel.json`. It captures each user's current listening minutes into the `usage_daily_snapshots` table, building the historical data that powers the usage charts and plan recommendation engine.
+
+### Stripe Webhook - Billing Events
+
+The Stripe webhook (`/api/stripe-webhook`) now records billing events (payments, refunds, subscription changes) into the `billing_events` table, providing the data source for the billing history chart.
+
+### Database Migration
+
+Migration `005_usage_and_billing_history.sql` creates two new tables (see Database Schema section below for details):
+- `usage_daily_snapshots` - Stores daily usage data per user
+- `billing_events` - Stores Stripe billing events per user
+
+---
+
 ## Database Schema
 
 ### Profiles Table
@@ -550,6 +633,39 @@ CREATE TABLE profiles (
   stripe_subscription_id TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+### Usage Daily Snapshots Table
+
+```sql
+CREATE TABLE usage_daily_snapshots (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  snapshot_date DATE NOT NULL,
+  listening_minutes_used INTEGER NOT NULL DEFAULT 0,
+  listening_minutes_limit INTEGER NOT NULL DEFAULT 60,
+  subscription_plan TEXT NOT NULL DEFAULT 'free',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id, snapshot_date)
+);
+```
+
+### Billing Events Table
+
+```sql
+CREATE TABLE billing_events (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  event_type TEXT NOT NULL,          -- 'payment' | 'refund' | 'plan_change'
+  amount_cents INTEGER NOT NULL DEFAULT 0,
+  currency TEXT NOT NULL DEFAULT 'usd',
+  description TEXT,
+  stripe_event_id TEXT,
+  stripe_invoice_id TEXT,
+  plan_before TEXT,
+  plan_after TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ```
 
@@ -595,6 +711,9 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 STRIPE_PRICE_ECONOMY=price_...
 STRIPE_PRICE_PRO=price_...
 STRIPE_PRICE_MASTER=price_...
+
+# Cron Job Authorization
+CRON_SECRET=your-cron-secret
 ```
 
 ---
@@ -662,6 +781,11 @@ npm run lint     # Run ESLint
 |-------|--------|-------------|
 | `/api/checkout` | POST | Create Stripe checkout session |
 | `/api/stripe-webhook` | POST | Handle Stripe webhook events |
+| `/api/subscription-details` | GET | Get subscription details for current user |
+| `/api/usage-history` | GET | Get 90-day usage history for current user |
+| `/api/billing-history` | GET | Get billing event history for current user |
+| `/api/plan-recommendation` | GET | Get personalized plan recommendation |
+| `/api/cron/usage-snapshot` | GET | Daily cron job to snapshot usage data |
 | `/auth/callback` | GET | Handle OAuth & email verification |
 
 ---

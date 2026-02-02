@@ -13,6 +13,10 @@
     {
       "path": "/api/cron/session-reminder?type=indices-open",
       "schedule": "30 14 * * 1-5"
+    },
+    {
+      "path": "/api/cron/usage-snapshot",
+      "schedule": "0 0 * * *"
     }
   ]
 }

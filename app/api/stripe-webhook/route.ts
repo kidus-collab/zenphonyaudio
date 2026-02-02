@@ -111,6 +111,19 @@ export async function POST(request: NextRequest) {
           console.error('Error updating profile with top-up:', updateError)
         } else {
           console.log(`Successfully added ${minutes} minutes to user ${user.id}. Total: ${newMinutes}`)
+
+          // Record billing event for top-up
+          await supabase.from('billing_events').upsert({
+            user_id: user.id,
+            event_type: 'topup_purchased',
+            amount_cents: session.amount_total || 0,
+            plan_from: null,
+            plan_to: null,
+            stripe_event_id: event.id,
+            description: `Top-up: ${minutes} minutes`,
+          }, { onConflict: 'stripe_event_id' }).then(({ error: beError }) => {
+            if (beError) console.error('Error recording billing event:', beError)
+          })
         }
 
       } else {
@@ -139,6 +152,19 @@ export async function POST(request: NextRequest) {
           console.error('Error updating profile:', updateError)
         } else {
           console.log(`Successfully activated ${planId} subscription for user ${user.id}`)
+
+          // Record billing event for subscription
+          await supabase.from('billing_events').upsert({
+            user_id: user.id,
+            event_type: 'subscription_created',
+            amount_cents: session.amount_total || 0,
+            plan_from: 'free',
+            plan_to: planId,
+            stripe_event_id: event.id,
+            description: `Subscribed to ${planId} plan (${billingPeriod})`,
+          }, { onConflict: 'stripe_event_id' }).then(({ error: beError }) => {
+            if (beError) console.error('Error recording billing event:', beError)
+          })
         }
       }
 
@@ -184,6 +210,19 @@ export async function POST(request: NextRequest) {
         console.error('Error updating subscription status:', updateError)
       } else {
         console.log(`Updated subscription status to ${subscriptionStatus} for user ${profile.id}`)
+
+        // Record billing event for subscription update
+        await supabase.from('billing_events').upsert({
+          user_id: profile.id,
+          event_type: 'subscription_updated',
+          amount_cents: 0,
+          plan_from: null,
+          plan_to: null,
+          stripe_event_id: event.id,
+          description: `Subscription status changed to ${subscriptionStatus}`,
+        }, { onConflict: 'stripe_event_id' }).then(({ error: beError }) => {
+          if (beError) console.error('Error recording billing event:', beError)
+        })
       }
 
       break
@@ -224,6 +263,19 @@ export async function POST(request: NextRequest) {
         console.error('Error cancelling subscription:', updateError)
       } else {
         console.log(`Subscription cancelled for user ${profile.id}, downgraded to free plan`)
+
+        // Record billing event for cancellation
+        await supabase.from('billing_events').upsert({
+          user_id: profile.id,
+          event_type: 'subscription_cancelled',
+          amount_cents: 0,
+          plan_from: null,
+          plan_to: 'free',
+          stripe_event_id: event.id,
+          description: 'Subscription cancelled, downgraded to free plan',
+        }, { onConflict: 'stripe_event_id' }).then(({ error: beError }) => {
+          if (beError) console.error('Error recording billing event:', beError)
+        })
       }
 
       break
@@ -251,6 +303,19 @@ export async function POST(request: NextRequest) {
           .eq('id', profile.id)
 
         console.log(`Marked subscription as past_due for user ${profile.id}`)
+
+        // Record billing event for payment failure
+        await supabase.from('billing_events').upsert({
+          user_id: profile.id,
+          event_type: 'payment_failed',
+          amount_cents: invoice.amount_due || 0,
+          plan_from: null,
+          plan_to: null,
+          stripe_event_id: event.id,
+          description: `Payment failed for invoice ${invoice.number || invoice.id}`,
+        }, { onConflict: 'stripe_event_id' }).then(({ error: beError }) => {
+          if (beError) console.error('Error recording billing event:', beError)
+        })
       }
 
       break
