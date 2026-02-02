@@ -8,8 +8,10 @@ export interface Profile {
   job_title: string | null
   subscription_plan: 'free' | 'economy' | 'pro' | 'master'
   subscription_status: 'active' | 'cancelled' | 'past_due'
+  subscription_period: string | null
   listening_minutes_used: number
   listening_minutes_limit: number
+  extra_minutes: number
   stripe_customer_id: string | null
   stripe_subscription_id: string | null
   created_at: string

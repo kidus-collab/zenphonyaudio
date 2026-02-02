@@ -189,7 +189,7 @@ export default function ProfilePage() {
                           </div>
                         ) : (
                           <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center text-white text-2xl font-bold">
-                            {fullName ? fullName.charAt(0).toUpperCase() : user.email?.charAt(0).toUpperCase()}
+                            {(profile?.full_name || user.email?.split('@')[0] || '?').charAt(0).toUpperCase()}
                           </div>
                         )}
                         <input
@@ -213,7 +213,7 @@ export default function ProfilePage() {
                       </div>
                       <div className="flex-1">
                         <h2 className="text-xl font-bold text-white mb-1">
-                          {fullName || "Set your name"}
+                          {profile?.full_name || user.email?.split('@')[0] || "Set your name"}
                         </h2>
                         <p className="text-white/50 text-sm">{user.email}</p>
                         <div className={`inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full text-xs font-semibold bg-${plan.color}-500/20 text-${plan.color}-400`}>

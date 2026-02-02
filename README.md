@@ -2,10 +2,13 @@
 
 A modern, full-stack audio technology platform built with Next.js 16, featuring Supabase authentication and Stripe subscription payments.
 
+> **Last Updated:** January 2026
+
 ## Table of Contents
 
 - [Overview](#overview)
 - [Tech Stack](#tech-stack)
+- [Deployment](#deployment)
 - [Folder Structure](#folder-structure)
 - [Architecture Overview](#architecture-overview)
 - [Authentication System](#authentication-system)
@@ -14,6 +17,7 @@ A modern, full-stack audio technology platform built with Next.js 16, featuring 
 - [Environment Variables](#environment-variables)
 - [Getting Started](#getting-started)
 - [API Routes](#api-routes)
+- [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -35,6 +39,63 @@ Zenphony Audio is a SaaS platform offering AI-powered audio tools, with the flag
 | State Management | React Context |
 | 3D Graphics | Three.js / Spline |
 | Forms | React Hook Form + Zod |
+
+---
+
+## Deployment
+
+### Production URLs
+
+| Service | URL |
+|---------|-----|
+| **Website** | https://zenphonyaudio.vercel.app |
+| **Supabase** | https://supabase.com/dashboard (project: brqumrnkcevzieqfvhsm) |
+
+### Vercel Configuration
+
+The app is deployed on **Vercel** with the following optimizations:
+
+```json
+// vercel.json
+{
+  "regions": ["iad1"]  // US East - matches Supabase region
+}
+```
+
+**Important:** The Vercel region (`iad1`) is set to match the Supabase region (`us-east-1`) for optimal latency.
+
+### Supabase Configuration
+
+**Region:** `us-east-1` (N. Virginia)
+
+**Required URL Configuration** (Supabase Dashboard → Authentication → URL Configuration):
+
+| Setting | Value |
+|---------|-------|
+| Site URL | `https://zenphonyaudio.vercel.app` |
+| Redirect URLs | `https://zenphonyaudio.vercel.app/**` |
+
+### Vercel Environment Variables
+
+Set these in Vercel Dashboard → Project Settings → Environment Variables:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://brqumrnkcevzieqfvhsm.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_BASE_URL=https://zenphonyaudio.vercel.app
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_PRICE_ECONOMY=price_...
+STRIPE_PRICE_PRO=price_...
+STRIPE_PRICE_MASTER=price_...
+```
+
+### Performance Optimizations
+
+1. **Edge Runtime** - Auth callback uses Edge runtime for faster cold starts (~50ms vs 1-3s)
+   - File: `app/auth/callback/route.ts`
+
+2. **Region Matching** - Vercel deployed to same region as Supabase (us-east-1 / iad1)
 
 ---
 
@@ -586,6 +647,61 @@ npm run lint     # Run ESLint
 | `/contact` | Contact page |
 | `/solutions` | Solutions page |
 | `/backstory` | Company backstory |
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+#### 1. Password Reset Email Not Redirecting Properly
+
+**Symptom:** Clicking password reset link doesn't go to `/reset-password`
+
+**Solution:**
+1. Go to Supabase Dashboard → Authentication → URL Configuration
+2. Add `https://zenphonyaudio.vercel.app/**` to Redirect URLs
+3. Ensure Site URL is `https://zenphonyaudio.vercel.app`
+
+#### 2. "Email Rate Limit Exceeded" Error
+
+**Symptom:** 429 error when sending password reset emails
+
+**Details:**
+- Supabase Auth allows **4 emails per hour** per user
+- 60 seconds minimum between emails
+- The forgot-password page shows a countdown timer when rate limited
+
+**Solution:** Wait for the countdown or wait 1 hour for the limit to reset.
+
+#### 3. Slow Auth on Vercel (vs localhost)
+
+**Symptom:** Password reset and auth operations are slow on Vercel but fast on localhost
+
+**Causes:**
+- Cold starts (serverless functions take 1-3s to warm up)
+- Region mismatch between Vercel and Supabase
+
+**Solutions Applied:**
+1. ✅ Edge Runtime for auth callback (reduces cold start to ~50ms)
+2. ✅ Vercel region set to `iad1` (matches Supabase `us-east-1`)
+
+#### 4. PKCE Code Exchange Fails
+
+**Symptom:** "Invalid code" or session errors after clicking email link
+
+**Cause:** PKCE verifier cookie missing (happens when reset requested from different domain)
+
+**Solution:** User must request password reset from the same domain they'll use to reset (e.g., both on `zenphonyaudio.vercel.app`)
+
+### Debug Logging
+
+Auth flows have console logging for debugging:
+- `[ForgotPassword]` - Password reset request
+- `[ResetPassword]` - Password reset page
+- `[Auth Callback]` - OAuth/email verification callback
+
+Check browser DevTools console for these logs.
 
 ---
 

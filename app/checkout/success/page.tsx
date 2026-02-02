@@ -8,10 +8,12 @@ import { ColorBends } from "@/components/color-bends"
 import { Button } from "@/components/ui/button"
 import { CheckCircle2, Loader2, Home, Download, Plus, Zap } from "lucide-react"
 import Link from "next/link"
+import { useAuth } from "@/contexts/auth-context"
 
 function SuccessContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { refreshProfile } = useAuth()
   const [loading, setLoading] = useState(true)
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [purchaseType, setPurchaseType] = useState<"subscription" | "topup">("subscription")
@@ -33,9 +35,11 @@ function SuccessContent() {
         body: JSON.stringify({ sessionId: session }),
       })
         .then((res) => res.json())
-        .then((data) => {
+        .then(async (data) => {
           if (data.success) {
             setVerifyStatus("success")
+            // Refresh the auth context profile so navigating to /profile shows updated plan
+            await refreshProfile()
             if (data.type === "subscription") {
               setVerifyMessage(`Successfully upgraded to ${data.plan} plan!`)
             } else {
