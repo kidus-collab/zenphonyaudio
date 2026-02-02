@@ -138,32 +138,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     console.log('[AuthContext] signOut called')
     try {
-      // Use global scope to sign out from all devices/tabs
-      // Add timeout because Supabase SDK sometimes hangs
-      const timeoutPromise = new Promise<{ error: null }>((resolve) => {
-        setTimeout(() => {
-          console.log('[AuthContext] signOut timeout - proceeding anyway')
-          resolve({ error: null })
-        }, 3000)
-      })
-
-      const signOutPromise = supabase.auth.signOut({ scope: 'global' })
-
-      const { error } = await Promise.race([signOutPromise, timeoutPromise])
+      // Use local scope - clears session cookies/storage immediately without
+      // needing a network roundtrip. Global scope requires an API call that
+      // can hang or timeout, leaving cookies intact and the user still logged in.
+      const { error } = await supabase.auth.signOut({ scope: 'local' })
 
       if (error) {
         console.error('[AuthContext] Error signing out:', error)
       } else {
         console.log('[AuthContext] signOut successful')
       }
-
-      // Always clear local auth states
-      setUser(null)
-      setSession(null)
-      setProfile(null)
     } catch (err) {
       console.error('[AuthContext] signOut exception:', err)
-      // Even if there's an error, clear the local state
+    } finally {
+      // Always clear local auth states
       setUser(null)
       setSession(null)
       setProfile(null)
