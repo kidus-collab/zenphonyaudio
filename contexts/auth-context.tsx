@@ -156,6 +156,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       console.error('[AuthContext] signOut exception:', err)
     }
+
+    // Forcefully clear all Supabase auth cookies regardless of whether signOut
+    // completed or timed out. Without this, the middleware will find valid cookies
+    // on the next request, refresh the session, and the user appears logged back in.
+    document.cookie.split(';').forEach((cookie) => {
+      const name = cookie.split('=')[0].trim()
+      if (name.startsWith('sb-')) {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`
+      }
+    })
+    console.log('[AuthContext] Supabase cookies cleared')
   }
 
   const updateProfile = async (updates: Partial<Profile>) => {

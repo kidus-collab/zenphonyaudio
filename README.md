@@ -394,6 +394,45 @@ Passwords are stored securely in Supabase Auth:
 - **Hashing**: bcrypt with salt
 - **Access**: Cannot be queried directly - managed by Supabase Auth service
 
+### Cookies vs onAuthStateChange vs React State
+
+Understanding how these three pieces relate is critical for debugging auth issues:
+
+- **Cookies (`sb-*`)** are the **source of truth**. Supabase stores access and refresh tokens in `sb-*` cookies managed by `@supabase/ssr`. The middleware reads these on every request to refresh expired sessions. Everything else is derived from cookies.
+
+- **`onAuthStateChange`** is a **listener, not a controller**. It fires events (`SIGNED_IN`, `SIGNED_OUT`, `TOKEN_REFRESHED`, `PASSWORD_RECOVERY`) in reaction to auth state changes. It does not create, destroy, or manage sessions. Think of it as an event emitter that the AuthContext subscribes to in order to keep React state in sync.
+
+- **React state** (`user`, `session`, `profile` in AuthContext) is a **mirror of the cookie-based session** for UI rendering. It's set on mount via `getSession()` and updated via the `onAuthStateChange` listener. Clearing React state alone does not sign the user out — the cookies must also be cleared.
+
+### Sign-Out Flow (Detailed)
+
+1. User clicks "Sign Out" in the avatar dropdown or profile page
+2. `signOut()` in AuthContext immediately clears React state (`user`, `session`, `profile` set to `null`) so the UI updates instantly
+3. `supabase.auth.signOut({ scope: 'local' })` is called, raced against a 2-second timeout to protect against the Supabase SDK hanging
+4. **All `sb-*` cookies are explicitly deleted via `document.cookie`** — this is the critical step. Without it, if the SDK call times out before clearing cookies, the middleware would find valid cookies on the next request, refresh the session, and the user would appear logged back in
+5. `window.location.href = "/"` triggers a full page reload to clear all in-memory cached state
+6. On reload, middleware finds no valid cookies, `getSession()` returns null, user stays logged out
+
+**Why explicit cookie clearing matters:** The `supabase.auth.signOut()` call can hang or be slow. The 2-second timeout ensures the UI isn't blocked, but if the timeout wins the race, the cookies are never cleared by the SDK. Explicitly deleting all `sb-*` cookies after the race guarantees the session is destroyed regardless of whether the SDK completed.
+
+### Password Reset Flow (Detailed)
+
+The password reset flow is **completely independent of existing cookies**:
+
+1. User requests a password reset from `/forgot-password`
+2. Supabase sends an email with a link containing a one-time `code` parameter
+3. User clicks the link, landing on `/reset-password?code=abc123`
+4. The page calls `exchangeCodeForSession(code)` which creates a **brand new session** by exchanging the one-time code with Supabase — no existing cookies are needed
+5. The `onAuthStateChange` listener on the reset-password page listens for `PASSWORD_RECOVERY` as a backup signal to show the reset form
+6. User submits their new password via `updateUser({ password })`
+7. On success, user is redirected to `/login`
+
+**Key point:** Sign-out cookie clearing does not affect password reset. The reset page creates its own fresh session from the email link's code. It never depends on previously existing cookies or auth state.
+
+### No Database Column Needed for Sign-In/Out Status
+
+Auth state lives entirely in Supabase session cookies and the AuthContext React state. The `profiles` table stores user profile data (name, subscription, etc.), not session status. There is no need for a `signed_in` column — the presence or absence of valid `sb-*` cookies determines whether a user is authenticated.
+
 ---
 
 ## Stripe Integration
