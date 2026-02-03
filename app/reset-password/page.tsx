@@ -198,96 +198,53 @@ function ResetPasswordForm() {
     try {
       const supabase = supabaseRef.current
 
-      // Refresh the session to ensure we have a valid access token
-      console.log('[ResetPassword] Refreshing session...')
-      const refreshResult = await Promise.race([
-        supabase.auth.refreshSession(),
-        new Promise<{ data: { session: null }; error: { message: string } }>((resolve) =>
-          setTimeout(() => resolve({ data: { session: null }, error: { message: 'Session refresh timed out' } }), 8000)
-        ),
-      ])
-
-      const { data: refreshData, error: refreshError } = refreshResult
-      console.log('[ResetPassword] Session refresh:', {
-        hasSession: !!refreshData.session,
-        error: refreshError?.message,
+      // Get the current session's access token
+      const { data: { session } } = await supabase.auth.getSession()
+      console.log('[ResetPassword] Session for update:', {
+        hasSession: !!session,
+        email: session?.user?.email,
       })
 
-      if (refreshError || !refreshData.session) {
-        // Fallback: try getSession in case refresh hangs but session exists
-        const { data: { session: fallbackSession } } = await supabase.auth.getSession()
-        if (!fallbackSession) {
-          setError("Your session has expired. Please request a new password reset link.")
-          setLoading(false)
-          return
-        }
-        console.log('[ResetPassword] Using fallback session')
+      if (!session?.access_token) {
+        setError("Your session has expired. Please request a new password reset link.")
+        setLoading(false)
+        return
       }
 
-      console.log('[ResetPassword] Updating password...')
-
-      // updateUser can also hang — race it against a timeout
-      const updateResult = await Promise.race([
-        supabase.auth.updateUser({ password }),
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('timeout')), 10000)
-        ),
-      ])
-
-      console.log('[ResetPassword] Password update result:', {
-        hasData: !!updateResult.data,
-        error: updateResult.error?.message,
+      // Bypass the SDK's updateUser which hangs with PKCE sessions.
+      // Call the Supabase Auth REST API directly.
+      console.log('[ResetPassword] Updating password via REST API...')
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      const res = await fetch(`${supabaseUrl}/auth/v1/user`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+          'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        },
+        body: JSON.stringify({ password }),
       })
 
-      if (updateResult.error) {
-        setError(updateResult.error.message)
+      const data = await res.json()
+      console.log('[ResetPassword] REST API response:', { status: res.status, hasId: !!data?.id })
+
+      if (!res.ok) {
+        setError(data?.message || data?.msg || 'Failed to update password')
         setLoading(false)
-      } else {
-        console.log('[ResetPassword] Password updated successfully!')
-        await supabase.auth.signOut().catch(() => {})
-        setSuccess(true)
-        setLoading(false)
-        setTimeout(() => {
-          router.push("/login")
-        }, 3000)
+        return
       }
+
+      console.log('[ResetPassword] Password updated successfully!')
+      await supabase.auth.signOut().catch(() => {})
+      setSuccess(true)
+      setLoading(false)
+      setTimeout(() => {
+        router.push("/login")
+      }, 3000)
     } catch (err: any) {
       console.error('[ResetPassword] Error:', err?.message)
-
-      if (err?.message === 'timeout') {
-        // updateUser hung — try to verify if it actually worked by signing in
-        console.log('[ResetPassword] updateUser timed out, verifying via sign-in...')
-        try {
-          const supabase = supabaseRef.current
-          const { data: { session: currentSession } } = await supabase.auth.getSession()
-          const email = currentSession?.user?.email
-
-          if (email) {
-            await supabase.auth.signOut().catch(() => {})
-            const { error: signInError } = await supabase.auth.signInWithPassword({
-              email,
-              password,
-            })
-
-            if (!signInError) {
-              console.log('[ResetPassword] Verification sign-in succeeded — password was updated')
-              await supabase.auth.signOut().catch(() => {})
-              setSuccess(true)
-              setLoading(false)
-              setTimeout(() => router.push("/login"), 3000)
-              return
-            }
-          }
-        } catch {
-          // Verification failed, fall through to error
-        }
-
-        setError("Password update timed out. Please try again or request a new reset link.")
-        setLoading(false)
-      } else {
-        setError(err?.message || "An unexpected error occurred. Please try again.")
-        setLoading(false)
-      }
+      setError(err?.message || "An unexpected error occurred. Please try again.")
+      setLoading(false)
     }
   }
 
