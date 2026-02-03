@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, lazy, Suspense } from "react"
 import { useRouter } from "next/navigation"
-import { User, Mail, Phone, Building, Briefcase, Camera, LogOut, Loader2, Check, ExternalLink, Headphones } from "lucide-react"
+import { User, Mail, Phone, Building, Briefcase, Camera, LogOut, Loader2, Check, Crown, ExternalLink, Headphones } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Footer } from "@/components/footer"
