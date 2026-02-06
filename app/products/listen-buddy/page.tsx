@@ -637,6 +637,10 @@ export default function ListenBuddyPage() {
 
             {/* Message from Listen Buddy - Chat Style */}
             <div className="mt-12 sm:mt-16 lg:mt-20 max-w-3xl mx-auto">
+              {/* Section Label */}
+              <p className="text-center text-white/30 text-sm sm:text-base font-medium tracking-wide mb-4 sm:mb-6">
+                Message from Listen Buddy
+              </p>
               <div className="relative">
                 {/* Floating glow effects */}
                 <div className="absolute -inset-4 bg-gradient-to-r from-violet-600/20 via-fuchsia-500/20 to-indigo-600/20 rounded-[2rem] blur-2xl animate-pulse" />
