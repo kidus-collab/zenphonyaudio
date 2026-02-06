@@ -727,6 +727,118 @@ export default function ListenBuddyPage() {
                 </div>
               ))}
             </div>
+
+            {/* Message from Listen Buddy - Chat Style */}
+            <div className="mt-12 sm:mt-16 lg:mt-20 max-w-3xl mx-auto">
+              <div className="relative">
+                {/* Floating glow effects */}
+                <div className="absolute -inset-4 bg-gradient-to-r from-violet-600/20 via-fuchsia-500/20 to-indigo-600/20 rounded-[2rem] blur-2xl animate-pulse" />
+                <div className="absolute -inset-1 bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 rounded-3xl blur-xl" />
+
+                {/* Chat container with 3D effect */}
+                <div className="relative bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-2xl shadow-violet-500/10"
+                  style={{ transform: 'perspective(1000px) rotateX(2deg)', transformStyle: 'preserve-3d' }}>
+
+                  {/* Chat header */}
+                  <div className="flex items-center gap-3 px-5 sm:px-6 py-4 border-b border-white/10 bg-white/[0.03]">
+                    <div className="relative">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-violet-500/30">
+                        <Headphones className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                      </div>
+                      <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-400 rounded-full border-2 border-black animate-pulse" />
+                    </div>
+                    <div>
+                      <h4 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                        Listen Buddy
+                        <Sparkles className="w-4 h-4 text-amber-400" />
+                      </h4>
+                      <p className="text-xs sm:text-sm text-white/50">typing...</p>
+                    </div>
+                  </div>
+
+                  {/* Chat message content */}
+                  <div className="p-5 sm:p-6 lg:p-8 space-y-4 sm:space-y-5">
+                    {/* Message bubble */}
+                    <div className="relative">
+                      <div className="bg-gradient-to-br from-violet-500/20 to-fuchsia-500/10 rounded-2xl rounded-tl-sm p-4 sm:p-5 border border-violet-500/20">
+                        <p className="text-base sm:text-lg text-white/90 leading-relaxed mb-4">
+                          Hey! Thanks for asking—let me give you the real story behind this.
+                        </p>
+                        <p className="text-sm sm:text-base text-white/70 leading-relaxed">
+                          First and most importantly: <span className="text-violet-400 font-semibold">I&apos;m not some AI bot spitting out templates.</span> My architecture actually cares about music, records actual sounds with multiple inputs so my responses feel like a session on your desk.
+                        </p>
+                      </div>
+                      {/* Tail */}
+                      <div className="absolute top-0 -left-2 w-4 h-4 bg-gradient-to-br from-violet-500/20 to-fuchsia-500/10 border-l border-t border-violet-500/20 rotate-45 -translate-y-1/2" style={{ clipPath: 'polygon(0 0, 100% 0, 0 100%)' }} />
+                    </div>
+
+                    {/* Plugin highlight */}
+                    <div className="flex items-start gap-3 p-4 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                        <Settings2 className="w-4 h-4 text-emerald-400" />
+                      </div>
+                      <p className="text-sm sm:text-base text-white/80 leading-relaxed">
+                        <span className="text-emerald-400 font-semibold">I use YOUR plugin list:</span> If you have plugins installed (see above), I&apos;ll give YOU specific recommendations—not what some random engineer thought might work.
+                      </p>
+                    </div>
+
+                    {/* Origin Story */}
+                    <div className="relative">
+                      <div className="bg-white/[0.04] rounded-2xl rounded-tl-sm p-4 sm:p-5 border border-white/10">
+                        <h5 className="text-sm sm:text-base font-bold text-violet-400 mb-3 flex items-center gap-2">
+                          <Music className="w-4 h-4" />
+                          My Origin Story
+                        </h5>
+                        <ul className="space-y-2 text-sm sm:text-base text-white/70">
+                          <li className="flex items-start gap-2">
+                            <span className="text-violet-400 mt-1">•</span>
+                            <span>Built by record producers who actually make music, not tech companies</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-violet-400 mt-1">•</span>
+                            <span>Designed so every response is practical and immediate</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-violet-400 mt-1">•</span>
+                            <span>Knows about hundreds of different sounds from real sessions</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    {/* Advantage for You */}
+                    <div className="relative">
+                      <div className="bg-gradient-to-br from-amber-500/10 to-orange-500/5 rounded-2xl rounded-tl-sm p-4 sm:p-5 border border-amber-500/20">
+                        <h5 className="text-sm sm:text-base font-bold text-amber-400 mb-3 flex items-center gap-2">
+                          <Zap className="w-4 h-4" />
+                          The Advantage for You
+                        </h5>
+                        <ul className="space-y-2 text-sm sm:text-base text-white/70">
+                          <li className="flex items-start gap-2">
+                            <span className="text-amber-400 mt-1">•</span>
+                            <span><span className="text-amber-400 font-semibold">Practical:</span> I give specific techniques based on the plugins you have.</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="text-amber-400 mt-1">•</span>
+                            <span><span className="text-amber-400 font-semibold">Contextual:</span> Answers fit your situation instead of one-size-fits-all blurbs.</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    {/* Animated typing indicator */}
+                    <div className="flex items-center gap-2 text-white/40 text-sm">
+                      <div className="flex gap-1">
+                        <div className="w-2 h-2 bg-violet-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <div className="w-2 h-2 bg-violet-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <div className="w-2 h-2 bg-violet-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </div>
+                      <span className="italic">Ready to help with your next session...</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
