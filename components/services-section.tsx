@@ -75,82 +75,11 @@ export function ServicesSection() {
 
           {/* Right Visual Block - Product Mockup */}
           <div className="relative w-full lg:w-[120%] lg:-mr-[20%] aspect-[4/3]">
-
-            {/* Floating Decorative Elements - Hidden on mobile to prevent overflow */}
-            {/* Top Right - Frequency Badge */}
-            <div className="hidden sm:flex absolute -top-4 right-2 sm:-right-2 lg:right-8 z-20 items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 shadow-lg shadow-violet-500/30">
-              <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-              <span className="text-xs sm:text-sm font-semibold text-white">AI Powered</span>
-            </div>
-
-            {/* Top Left - Floating Card - Hidden on small mobile */}
-            <div className="hidden md:block absolute -top-6 -left-4 lg:-left-8 z-20 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-black/60 backdrop-blur-xl border border-white/10 shadow-xl">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center">
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-xs sm:text-sm font-semibold text-white">Mix Analysis</p>
-                  <p className="text-xs text-white/50">Real-time feedback</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Left - Stats Card - Hidden on small mobile */}
-            <div className="hidden md:block absolute -bottom-4 -left-4 lg:-left-6 z-20 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-black/60 backdrop-blur-xl border border-white/10 shadow-xl">
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div className="text-center">
-                  <p className="text-lg sm:text-2xl font-bold text-violet-400">98%</p>
-                  <p className="text-xs text-white/50">Accuracy</p>
-                </div>
-                <div className="w-px h-8 sm:h-10 bg-white/10" />
-                <div className="text-center">
-                  <p className="text-lg sm:text-2xl font-bold text-emerald-400">0.1s</p>
-                  <p className="text-xs text-white/50">Latency</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Right - Waveform Card - Hidden on small mobile */}
-            <div className="hidden md:block absolute -bottom-6 -right-2 lg:right-4 z-20 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-black/60 backdrop-blur-xl border border-white/10 shadow-xl">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="flex items-end gap-0.5 h-6 sm:h-8">
-                  <div className="w-1 sm:w-1.5 bg-gradient-to-t from-violet-500 to-fuchsia-500 rounded-full animate-pulse" style={{ height: '60%' }} />
-                  <div className="w-1 sm:w-1.5 bg-gradient-to-t from-violet-500 to-fuchsia-500 rounded-full animate-pulse" style={{ height: '100%', animationDelay: '0.1s' }} />
-                  <div className="w-1 sm:w-1.5 bg-gradient-to-t from-violet-500 to-fuchsia-500 rounded-full animate-pulse" style={{ height: '40%', animationDelay: '0.2s' }} />
-                  <div className="w-1 sm:w-1.5 bg-gradient-to-t from-violet-500 to-fuchsia-500 rounded-full animate-pulse" style={{ height: '80%', animationDelay: '0.3s' }} />
-                  <div className="w-1 sm:w-1.5 bg-gradient-to-t from-violet-500 to-fuchsia-500 rounded-full animate-pulse" style={{ height: '50%', animationDelay: '0.4s' }} />
-                </div>
-                <div>
-                  <p className="text-xs sm:text-sm font-semibold text-white">Spectral</p>
-                  <p className="text-xs text-white/50">Analysis</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Orbiting Dots - Hidden on mobile */}
-            <div className="hidden lg:block absolute top-1/2 -left-8 w-3 h-3 rounded-full bg-violet-500 blur-[2px] animate-pulse" />
-            <div className="hidden lg:block absolute top-1/4 -right-4 w-2 h-2 rounded-full bg-fuchsia-500 blur-[1px] animate-pulse" style={{ animationDelay: '0.5s' }} />
-            <div className="hidden lg:block absolute bottom-1/4 -left-6 w-2 h-2 rounded-full bg-cyan-500 blur-[1px] animate-pulse" style={{ animationDelay: '1s' }} />
-
             {/* Animated Glow Ring */}
             <div className="absolute -inset-6 bg-gradient-to-r from-violet-600/40 via-fuchsia-500/30 to-indigo-600/40 rounded-3xl blur-3xl animate-pulse" />
 
             {/* Secondary Glow */}
             <div className="absolute -inset-3 bg-gradient-to-br from-violet-500/30 to-transparent rounded-3xl blur-2xl" />
-
-            {/* Connecting Lines - Decorative */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none z-10" style={{ overflow: 'visible' }}>
-              <defs>
-                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="rgba(139, 92, 246, 0)" />
-                  <stop offset="50%" stopColor="rgba(139, 92, 246, 0.5)" />
-                  <stop offset="100%" stopColor="rgba(139, 92, 246, 0)" />
-                </linearGradient>
-              </defs>
-            </svg>
 
             {/* Main Image Container */}
             <div className="relative w-full h-full rounded-3xl overflow-hidden border-2 border-white/20 bg-black/20 backdrop-blur-sm shadow-2xl shadow-violet-500/30">
@@ -172,16 +101,6 @@ export function ServicesSection() {
               {/* Corner Accents */}
               <div className="absolute top-0 left-0 w-20 h-20 bg-gradient-to-br from-white/10 to-transparent" />
               <div className="absolute bottom-0 right-0 w-20 h-20 bg-gradient-to-tl from-violet-500/20 to-transparent" />
-
-              {/* Inner Floating Elements */}
-              <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20">
-                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-xs font-medium text-white">Live</span>
-              </div>
-
-              <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-500/80 backdrop-blur-md border border-violet-400/30">
-                <span className="text-xs font-semibold text-white">PRO</span>
-              </div>
             </div>
           </div>
         </div>
