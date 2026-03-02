@@ -41,36 +41,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return data as Profile
   }
 
+  // Fetch profile whenever the user changes.
+  // Decoupled from onAuthStateChange to avoid a deadlock:
+  // _notifyAllSubscribers awaits all callbacks, and if the callback calls
+  // supabase.from().select() (which internally calls getSession() →
+  // await initializePromise), it deadlocks when triggered during initialization.
+  useEffect(() => {
+    if (user) {
+      fetchProfile(user.id).then((profileData) => {
+        setProfile(profileData)
+      })
+    } else {
+      setProfile(null)
+    }
+  }, [user?.id])
+
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       setUser(session?.user ?? null)
-
-      if (session?.user) {
-        const profileData = await fetchProfile(session.user.id)
-        setProfile(profileData)
-      }
-
       setLoading(false)
     }).catch((err) => {
       console.error('[AuthContext] Error getting session:', err)
       setLoading(false)
     })
 
-    // Listen for auth changes
+    // Listen for auth changes — intentionally NOT async to avoid deadlock.
+    // The Supabase auth-js _notifyAllSubscribers() awaits all onAuthStateChange
+    // callbacks. If this callback were async and called fetchProfile() (which
+    // triggers getSession() internally), it would deadlock during initialization
+    // because getSession() awaits initializePromise, which can't resolve until
+    // _notifyAllSubscribers completes.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         setSession(session)
         setUser(session?.user ?? null)
-
-        if (session?.user) {
-          const profileData = await fetchProfile(session.user.id)
-          setProfile(profileData)
-        } else {
+        if (!session?.user) {
           setProfile(null)
         }
-
         setLoading(false)
       }
     )
