@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
 
     // Parse request body for plugin URL
     const body = await request.json().catch(() => ({}))
-    const pluginUrl = body.pluginUrl || process.env.NEXT_PUBLIC_PLUGIN_URL || "listenbuddy://auth"
+    const pluginUrl = body.pluginUrl || process.env.NEXT_PUBLIC_PLUGIN_URL || "http://localhost:28173/auth/callback"
 
     // Generate a secure random token
     const token = `plt_${crypto.randomBytes(32).toString("hex")}`

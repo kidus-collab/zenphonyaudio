@@ -16,7 +16,7 @@ export default function PluginConnectPage() {
   const [openingPlugin, setOpeningPlugin] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [pluginUrl] = useState(process.env.NEXT_PUBLIC_PLUGIN_URL || "listenbuddy://auth")
+  const [pluginUrl] = useState(process.env.NEXT_PUBLIC_PLUGIN_URL || "http://localhost:28173/auth/callback")
   const [autoOpening, setAutoOpening] = useState(true)
   const hasAutoOpened = useRef(false)
 
@@ -55,22 +55,11 @@ export default function PluginConnectPage() {
         throw new Error(data.error || 'Failed to generate token')
       }
 
-      // Check if this is a native app deep link (custom URL scheme)
-      const isDeepLink = data.plugin_url.startsWith('listenbuddy://') ||
-                         !data.plugin_url.startsWith('http')
-
-      if (isDeepLink) {
-        // For native apps, use location.href to trigger the deep link
-        // This will open the JUCE app/plugin with the auth parameters
-        console.log('[Plugin] Opening native app with deep link:', data.plugin_url)
-        window.location.href = data.plugin_url
-        setSuccess(true)
-      } else {
-        // For web-based plugin, open in a new tab
-        const windowName = `listenbuddy_${Date.now()}`
-        window.open(data.plugin_url, windowName)
-        setSuccess(true)
-      }
+      // Open localhost callback URL in a new tab
+      // The JUCE app runs a local HTTP server on port 28173 to receive the auth token
+      console.log('[Plugin] Redirecting to localhost callback:', data.plugin_url)
+      window.open(data.plugin_url, '_blank')
+      setSuccess(true)
     } catch (err) {
       console.error('Error opening plugin:', err)
       setError(err instanceof Error ? err.message : 'Failed to open plugin')
@@ -162,9 +151,7 @@ export default function PluginConnectPage() {
               {/* Success Message */}
               {success && (
                 <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-center text-sm">
-                  {pluginUrl.startsWith('listenbuddy://')
-                    ? "Opening Listen Buddy app... Check if it launched!"
-                    : "Plugin opened! Check your new browser tab."}
+                  Signing you into Listen Buddy... You can close the browser tab that opened.
                 </div>
               )}
 
@@ -191,9 +178,7 @@ export default function PluginConnectPage() {
 
               {/* Help Text */}
               <p className="text-white/30 text-xs text-center mt-4">
-                {pluginUrl.startsWith('listenbuddy://')
-                  ? "Opens Listen Buddy with secure one-time login"
-                  : "Opens in a new window with secure one-time login"}
+                Make sure Listen Buddy is running — signs you in via secure local connection
               </p>
 
               {/* Divider */}
