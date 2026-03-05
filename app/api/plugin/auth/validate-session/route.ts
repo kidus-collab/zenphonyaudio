@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
     // Get the auth token from header
     const authHeader = request.headers.get("authorization")
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.error("[validate-session] Missing or invalid authorization header")
       return NextResponse.json(
         { error: "Missing or invalid authorization header", valid: false },
         { status: 401 }
@@ -44,11 +45,14 @@ export async function POST(request: NextRequest) {
     const { user_id } = body
 
     if (!user_id) {
+      console.error("[validate-session] Missing user_id in request body")
       return NextResponse.json(
         { error: "Missing user_id", valid: false },
         { status: 400 }
       )
     }
+
+    console.log("[validate-session] Validating session for user_id:", user_id)
 
     const admin = getSupabaseAdmin()
 
@@ -61,6 +65,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (tokenError || !tokenData) {
+      console.error("[validate-session] Token lookup failed for user_id:", user_id, "| Error:", tokenError?.message || "Token not found")
       return NextResponse.json(
         { error: "Invalid or expired token", valid: false },
         { status: 401 }
@@ -73,6 +78,7 @@ export async function POST(request: NextRequest) {
       // Clean up expired token
       await admin.from("auth_tokens").delete().eq("token", token)
 
+      console.error("[validate-session] Token expired at:", expiresAt.toISOString(), "for user_id:", user_id)
       return NextResponse.json(
         { error: "Token expired", valid: false },
         { status: 401 }
@@ -87,6 +93,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (profileError) {
+      console.error("[validate-session] Profile not found for user_id:", user_id, "| Error:", profileError.message)
       return NextResponse.json(
         { error: "User not found", valid: false },
         { status: 404 }
@@ -97,11 +104,14 @@ export async function POST(request: NextRequest) {
     const { data: { user }, error: userError } = await admin.auth.admin.getUserById(user_id)
 
     if (userError || !user) {
+      console.error("[validate-session] Auth user not found for user_id:", user_id, "| Error:", userError?.message)
       return NextResponse.json(
         { error: "User not found", valid: false },
         { status: 404 }
       )
     }
+
+    console.log("[validate-session] Session valid for user:", user.email)
 
     return NextResponse.json({
       valid: true,

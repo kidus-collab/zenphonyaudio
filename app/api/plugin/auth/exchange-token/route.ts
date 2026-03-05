@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
     const { token } = body
 
     if (!token || typeof token !== "string") {
+      console.error("[exchange-token] Missing or invalid token in request body")
       return NextResponse.json(
         { error: "Missing or invalid token" },
         { status: 400, headers: corsHeaders }
@@ -45,11 +46,14 @@ export async function POST(request: NextRequest) {
 
     // Validate token format
     if (!token.startsWith("plt_") || token.length !== 68) {
+      console.error("[exchange-token] Invalid token format. Length:", token.length, "Prefix:", token.substring(0, 4))
       return NextResponse.json(
         { error: "Invalid token format" },
         { status: 400, headers: corsHeaders }
       )
     }
+
+    console.log("[exchange-token] Attempting to exchange token for user profile...")
 
     // Look up the token
     const { data: authToken, error: tokenError } = await getSupabaseAdmin()
@@ -59,11 +63,14 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (tokenError || !authToken) {
+      console.error("[exchange-token] Token lookup failed:", tokenError?.message || "Token not found in database")
       return NextResponse.json(
         { error: "Invalid or expired token" },
         { status: 401, headers: corsHeaders }
       )
     }
+
+    console.log("[exchange-token] Token found for user_id:", authToken.user_id, "| Used:", authToken.used, "| Expires:", authToken.expires_at)
 
     // Check if token is expired
     if (new Date(authToken.expires_at) < new Date()) {
@@ -73,6 +80,7 @@ export async function POST(request: NextRequest) {
         .delete()
         .eq("id", authToken.id)
 
+      console.error("[exchange-token] Token expired at:", authToken.expires_at)
       return NextResponse.json(
         { error: "Token has expired. Please generate a new one." },
         { status: 401, headers: corsHeaders }
@@ -81,6 +89,7 @@ export async function POST(request: NextRequest) {
 
     // Check if token was already used
     if (authToken.used) {
+      console.error("[exchange-token] Token already used for user_id:", authToken.user_id)
       return NextResponse.json(
         { error: "Token has already been used. Please generate a new one." },
         { status: 401, headers: corsHeaders }
@@ -135,6 +144,8 @@ export async function POST(request: NextRequest) {
     )
     const topupMinutes = profile.topup_minutes || 0
     const totalAvailable = subscriptionRemaining + topupMinutes
+
+    console.log("[exchange-token] Auth handoff successful for user:", profile.email, "| Plan:", profile.subscription_plan)
 
     // Return user data for the plugin
     return NextResponse.json({

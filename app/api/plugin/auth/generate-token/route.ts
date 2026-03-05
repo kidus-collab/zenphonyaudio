@@ -27,11 +27,14 @@ export async function POST(request: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
     if (authError || !user) {
+      console.error("[generate-token] Auth failed:", authError?.message || "No user session")
       return NextResponse.json(
         { error: "Not authenticated. Please log in first." },
         { status: 401 }
       )
     }
+
+    console.log("[generate-token] Generating token for user:", user.id, user.email)
 
     // Parse request body for plugin URL
     const body = await request.json().catch(() => ({}))
@@ -77,6 +80,9 @@ export async function POST(request: NextRequest) {
 
     // Build the plugin URL with the token, user_id, and api_origin
     const pluginAuthUrl = `${pluginUrl}?auth_token=${token}&user_id=${user.id}&api_origin=${encodeURIComponent(websiteOrigin)}`
+
+    console.log("[generate-token] Token generated successfully for user:", user.id)
+    console.log("[generate-token] Deep link URL:", pluginAuthUrl)
 
     return NextResponse.json({
       success: true,
