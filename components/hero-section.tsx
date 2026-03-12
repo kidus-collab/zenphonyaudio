@@ -1,11 +1,15 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { CircularWaveform } from "./circular-waveform"
+import { MusicOrb3D } from "./music-orb-3d"
+import { useOrbProximity } from "@/hooks/use-orb-proximity"
 import { Play, Sparkles } from "lucide-react"
 
 export function HeroSection() {
   const [isVisible, setIsVisible] = useState(false)
+  const orbRef = useRef<HTMLDivElement>(null)
+  const proximity = useOrbProximity(orbRef)
 
   useEffect(() => {
     setIsVisible(true)
@@ -57,29 +61,21 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Compact Orb Section */}
-      <div className={`relative z-10 mt-16 lg:mt-20 transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+      {/* 3D Orb Section */}
+      <div
+        ref={orbRef}
+        className={`relative z-10 mt-16 lg:mt-20 transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+      >
         <div className="relative flex items-center justify-center">
-          {/* Circular Waveform - Smaller on all screens */}
+          {/* Circular Waveform behind orb */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="scale-[0.35] sm:scale-[0.45] lg:scale-[0.5] xl:scale-[0.55] origin-center">
               <CircularWaveform size={480} bars={64} />
             </div>
           </div>
 
-          {/* Floating orb - Smaller */}
-          <div className="relative z-10 w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 animate-float">
-            {/* Soft glow */}
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-violet-500/20 via-indigo-500/15 to-purple-500/20 blur-2xl" />
-            <div className="absolute inset-4 rounded-full bg-gradient-to-br from-violet-500/10 via-transparent to-indigo-500/10 backdrop-blur-sm border border-white/10" />
-
-            {/* Center icon */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-violet-400/60">
-                ♪
-              </div>
-            </div>
-          </div>
+          {/* 3D Music Orb */}
+          <MusicOrb3D proximity={proximity} className="relative z-10" />
         </div>
       </div>
 
