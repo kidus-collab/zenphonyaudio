@@ -1,8 +1,8 @@
 # Zenphony Audio Website
 
-A modern, full-stack audio technology platform built with Next.js 16, featuring Supabase authentication and Stripe subscription payments.
+A modern, full-stack audio technology platform built with Next.js 16. Zenphony Audio builds intelligent tools that help humans hear more clearly, decide faster, and trust their sound — starting with Listen Buddy, an AI-powered audio analysis tool. The platform features Supabase authentication, Stripe subscription billing, usage analytics, and a cinematic dark UI with 3D animations and glassmorphic design.
 
-> **Last Updated:** February 2026
+> **Last Updated:** March 2026
 
 ## Table of Contents
 
@@ -24,7 +24,7 @@ A modern, full-stack audio technology platform built with Next.js 16, featuring 
 
 ## Overview
 
-Zenphony Audio is a SaaS platform offering AI-powered audio tools, with the flagship product being **Listen Buddy** - an intelligent audio analysis tool. The platform supports user authentication, subscription-based pricing tiers, and a modern glassmorphic UI design.
+Zenphony Audio is a SaaS platform offering AI-powered audio tools, with the flagship product being **Listen Buddy** — an intelligent audio analysis companion. The platform features a cinematic hero section with animated circular waveforms and a floating music orb, 3D page transition animations, four subscription tiers with Stripe billing, real-time usage analytics with personalized plan recommendations, and a dark glassmorphic UI built on OKLCH color science.
 
 ## Tech Stack
 
@@ -178,10 +178,11 @@ zenphony-audio-website/
 │   ├── features-section.tsx      # Features display section
 │   ├── footer.tsx                # Site footer
 │   ├── hero-section.tsx          # Homepage hero
+│   ├── music-orb-3d.tsx          # 3D animated music orb (CSS transforms)
 │   ├── login-popup.tsx           # Login modal component
 │   ├── marquee-section.tsx       # Scrolling marquee
 │   ├── navigation.tsx            # Main navigation bar
-│   ├── page-transition.tsx       # Page transition animations
+│   ├── page-transition.tsx       # Page transition with 3D orb animation
 │   ├── products-section.tsx      # Products showcase
 │   ├── search-modal.tsx          # Search functionality
 │   ├── services-section.tsx      # Services display
@@ -195,6 +196,7 @@ zenphony-audio-website/
 │
 ├── hooks/                        # Custom React hooks
 │   ├── use-mobile.ts             # Mobile detection hook
+│   ├── use-orb-proximity.ts      # Scroll proximity for orb effects
 │   └── use-toast.ts              # Toast notification hook
 │
 ├── lib/                          # Utility libraries
