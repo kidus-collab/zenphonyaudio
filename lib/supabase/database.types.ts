@@ -6,12 +6,12 @@ export interface Profile {
   phone: string | null
   company: string | null
   job_title: string | null
-  subscription_plan: 'free' | 'economy' | 'pro' | 'master'
+  subscription_plan: 'free' | 'basic' | 'pro' | 'max'
   subscription_status: 'active' | 'cancelled' | 'past_due'
   subscription_period: string | null
   listening_minutes_used: number
   listening_minutes_limit: number
-  extra_minutes: number
+  topup_minutes: number
   stripe_customer_id: string | null
   stripe_subscription_id: string | null
   created_at: string

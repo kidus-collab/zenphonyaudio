@@ -159,7 +159,8 @@ export default function ProfilePage() {
   const currentPlan = profile?.subscription_plan || "free"
   const plan = planDetails[currentPlan as keyof typeof planDetails]
   const minutesUsed = profile?.listening_minutes_used || 0
-  const minutesLimit = profile?.listening_minutes_limit || 5
+  const topupMinutes = profile?.topup_minutes || 0
+  const minutesLimit = (profile?.listening_minutes_limit || 5) + topupMinutes
   const isUnlimited = minutesLimit === -1
 
   return (

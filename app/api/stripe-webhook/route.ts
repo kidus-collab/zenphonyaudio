@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
         // Get current profile
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
-          .select('extra_minutes')
+          .select('topup_minutes')
           .eq('id', user.id)
           .single()
 
@@ -95,14 +95,14 @@ export async function POST(request: NextRequest) {
           break
         }
 
-        const currentMinutes = profile?.extra_minutes || 0
+        const currentMinutes = profile?.topup_minutes || 0
         const newMinutes = currentMinutes + minutes
 
-        // Update user profile with extra minutes
+        // Update user profile with top-up minutes
         const { error: updateError } = await supabase
           .from('profiles')
           .update({
-            extra_minutes: newMinutes,
+            topup_minutes: newMinutes,
             last_topup_at: new Date().toISOString(),
           })
           .eq('id', user.id)
