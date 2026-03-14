@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3005'
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://zenphonyaudio.vercel.app'
 
     // Handle top-up purchase (one-time payment)
     if (topUpId) {
